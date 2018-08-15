@@ -8,7 +8,6 @@ import {
     isAreaChart,
     isScatterPlot,
     isOneOfTypes,
-    isBubbleChart,
     isHeatmap,
     isTreemap
 } from '../../utils/common';
@@ -93,12 +92,9 @@ export default function getLegend(legendConfig: any = {}, chartOptions: any) {
     const defaultLegendConfigByType = {};
     const rightLegendCharts = [VisualizationTypes.SCATTER, VisualizationTypes.TREEMAP, VisualizationTypes.BUBBLE];
 
-    if (isOneOfTypes(chartOptions.type, rightLegendCharts)) {
-        set(defaultLegendConfigByType, 'position', 'right');
-
-        // TODO: Remove after bubble will have own legend configuration
-        if (isBubbleChart(chartOptions.type)) {
-            set(defaultLegendConfigByType, 'enabled', true);
+    if (legendConfig.position === 'auto' || !legendConfig.position) {
+        if (isOneOfTypes(chartOptions.type, rightLegendCharts)) {
+            set(defaultLegendConfigByType, 'position', 'right');
         }
     }
 
