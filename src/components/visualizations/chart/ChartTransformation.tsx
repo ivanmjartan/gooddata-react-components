@@ -45,6 +45,7 @@ export interface IChartTransformationProps {
     onLegendReady: OnLegendReady;
 
     afterRender(): void;
+    pushData?(data: any): void;
     renderer(arg: IHighChartsRendererProps): JSX.Element;
     onDataTooLarge(chartOptions: any): void;
     onNegativeValues(chartOptions: any): void;
@@ -62,6 +63,7 @@ export default class ChartTransformation extends React.Component<IChartTransform
         afterRender: noop,
         onNegativeValues: null as any,
         onFiredDrillEvent: () => true,
+        pushData: noop,
         onLegendReady: noop,
         height: undefined as number,
         width: undefined as number
@@ -87,10 +89,14 @@ export default class ChartTransformation extends React.Component<IChartTransform
             config,
             onFiredDrillEvent,
             onLegendReady,
-            locale
+            locale,
+            pushData
         } = this.props;
         const drillConfig = { afm, onFiredDrillEvent };
         const hcOptions = getHighchartsOptions(chartOptions, drillConfig, config);
+
+        const legend = getLegend(config.legend, chartOptions);
+        pushData({ isLegendVisible: legend.enabled });
 
         return {
             chartOptions,
@@ -100,7 +106,7 @@ export default class ChartTransformation extends React.Component<IChartTransform
             afterRender,
             onLegendReady,
             locale,
-            legend: getLegend(config.legend, chartOptions)
+            legend
         };
     }
 
