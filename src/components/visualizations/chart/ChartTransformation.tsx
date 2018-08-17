@@ -96,7 +96,16 @@ export default class ChartTransformation extends React.Component<IChartTransform
         const hcOptions = getHighchartsOptions(chartOptions, drillConfig, config);
 
         const legend = getLegend(config.legend, chartOptions);
-        pushData({ isLegendVisible: legend.enabled });
+
+        pushData({
+            properties: {
+                controls: {
+                    legend: {
+                        visible: legend.enabled
+                    }
+                }
+            }
+        });
 
         return {
             chartOptions,
