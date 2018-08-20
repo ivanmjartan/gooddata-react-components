@@ -1440,6 +1440,11 @@ export function getChartOptions(
         );
         viewByAttribute = treemapViewByAttribute;
         stackByAttribute = treemapStackByAttribute;
+    } else if (isBubbleChart(type)) {
+        viewByAttribute = findAttributeInDimension(
+            dimensions[STACK_BY_DIMENSION_INDEX],
+            attributeHeaderItems[STACK_BY_DIMENSION_INDEX]
+        );
     } else {
         viewByAttribute = findAttributeInDimension(
             dimensions[VIEW_BY_DIMENSION_INDEX],
@@ -1620,6 +1625,7 @@ export function getChartOptions(
         return {
             type,
             stacking,
+            hasViewByAttribute: Boolean(viewByAttribute),
             legendLayout: 'horizontal',
             colorPalette,
             yAxes,
