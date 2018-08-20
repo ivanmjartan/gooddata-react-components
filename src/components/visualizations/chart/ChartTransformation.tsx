@@ -70,7 +70,7 @@ export default class ChartTransformation extends React.Component<IChartTransform
     };
 
     private chartOptions: IChartOptions;
-    private legend: any;
+    private legendOption: any;
 
     public componentWillMount() {
         this.assignChartOptions(this.props);
@@ -81,7 +81,7 @@ export default class ChartTransformation extends React.Component<IChartTransform
     }
 
     public getRendererProps() {
-        const { chartOptions, legend } = this;
+        const { chartOptions, legendOption } = this;
         const {
             executionRequest: { afm },
             height,
@@ -103,7 +103,7 @@ export default class ChartTransformation extends React.Component<IChartTransform
             afterRender,
             onLegendReady,
             locale,
-            legend
+            legend: legendOption
         };
     }
 
@@ -147,15 +147,16 @@ export default class ChartTransformation extends React.Component<IChartTransform
                 '"onNegativeValues" callback required for pie chart transformation is missing.');
             onNegativeValues(this.chartOptions);
         }
-        this.setState(validationResult);
 
-        this.legend = getLegend(config.legend, this.chartOptions);
+        this.legendOption = getLegend(config.legend, this.chartOptions);
 
         pushData({
             propertiesMeta: {
-                legendVisible: this.legend.enabled
+                legend_visible: this.legendOption.enabled
             }
         });
+
+        this.setState(validationResult);
 
         return this.chartOptions;
     }
