@@ -10,7 +10,7 @@ import {
 
 import { getChartOptions, validateData, IChartOptions } from './chartOptionsBuilder';
 import { getHighchartsOptions } from './highChartsCreators';
-import getLegend from './legend/legendBuilder';
+import getLegend, { ILegendOptions } from './legend/legendBuilder';
 import HighChartsRenderer, {
     IHighChartsRendererProps,
     renderLegend as legendRenderer,
@@ -70,7 +70,7 @@ export default class ChartTransformation extends React.Component<IChartTransform
     };
 
     private chartOptions: IChartOptions;
-    private legendOptions: any;
+    private legendOptions: ILegendOptions;
 
     public componentWillMount() {
         this.assignChartOptions(this.props);

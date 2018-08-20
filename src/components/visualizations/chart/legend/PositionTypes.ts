@@ -3,3 +3,11 @@ export const LEFT = 'left';
 export const RIGHT = 'right';
 export const TOP = 'top';
 export const BOTTOM = 'bottom';
+
+export enum PositionType {
+    LEFT = 'left',
+    RIGHT = 'right',
+    TOP = 'top',
+    BOTTOM = 'bottom',
+    AUTO = 'auto'
+}

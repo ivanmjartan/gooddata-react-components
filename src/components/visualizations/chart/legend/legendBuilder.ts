@@ -2,7 +2,7 @@
 import pick = require('lodash/pick');
 import set = require('lodash/set');
 import get = require('lodash/get');
-import { RIGHT } from './PositionTypes';
+import { RIGHT, PositionType } from './PositionTypes';
 import * as Highcharts from 'highcharts';
 import {
     isAreaChart,
@@ -13,6 +13,32 @@ import {
     isBubbleChart
 } from '../../utils/common';
 import { VisualizationTypes } from '../../../../constants/visualizationTypes';
+
+export interface ILegendOptions {
+   enabled: boolean;
+   position: PositionType;
+   format: string;
+   items: LegendOptionsItemType[];
+}
+
+export type LegendOptionsItemType = ILegendBaseItem | ILegendHeatMapItem;
+
+export interface ILegendBaseItem {
+    name: string;
+    color: string; // in format rgb(20,178,226)
+    legendIndex: number;
+}
+
+export interface ILegendHeatMapItem {
+    range: IRange;
+    color: string | Highcharts.Gradient;
+    legendIndex: number;
+}
+
+export interface IRange {
+    from: number;
+    to: number;
+}
 
 export const DEFAULT_LEGEND_CONFIG = {
     enabled: true,
@@ -51,7 +77,7 @@ export function shouldLegendBeEnabled(chartOptions: any) {
         || isHeatmapWithMultipleValues(chartOptions);
 }
 
-export function getLegendItems(chartOptions: any) {
+export function getLegendItems(chartOptions: any): LegendOptionsItemType[] {
     const { type } = chartOptions;
     const firstSeriesDataTypes = [
         VisualizationTypes.PIE,
@@ -89,7 +115,7 @@ export function getLegendItems(chartOptions: any) {
             pick(legendDataSourceItem, ['name', 'color', 'legendIndex']));
 }
 
-export default function getLegend(legendConfig: any = {}, chartOptions: any) {
+export default function getLegend(legendConfig: any = {}, chartOptions: any): ILegendOptions {
     const defaultLegendConfigByType = {};
     const rightLegendCharts = [VisualizationTypes.SCATTER, VisualizationTypes.TREEMAP, VisualizationTypes.BUBBLE];
 
