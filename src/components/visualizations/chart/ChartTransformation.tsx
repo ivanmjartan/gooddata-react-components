@@ -70,7 +70,7 @@ export default class ChartTransformation extends React.Component<IChartTransform
     };
 
     private chartOptions: IChartOptions;
-    private legendOption: any;
+    private legendOptions: any;
 
     public componentWillMount() {
         this.assignChartOptions(this.props);
@@ -81,7 +81,7 @@ export default class ChartTransformation extends React.Component<IChartTransform
     }
 
     public getRendererProps() {
-        const { chartOptions, legendOption } = this;
+        const { chartOptions, legendOptions } = this;
         const {
             executionRequest: { afm },
             height,
@@ -103,7 +103,7 @@ export default class ChartTransformation extends React.Component<IChartTransform
             afterRender,
             onLegendReady,
             locale,
-            legend: legendOption
+            legend: legendOptions
         };
     }
 
@@ -148,11 +148,11 @@ export default class ChartTransformation extends React.Component<IChartTransform
             onNegativeValues(this.chartOptions);
         }
 
-        this.legendOption = getLegend(config.legend, this.chartOptions);
+        this.legendOptions = getLegend(config.legend, this.chartOptions);
 
         pushData({
             propertiesMeta: {
-                legend_visible: this.legendOption.enabled
+                legend_visible: this.legendOptions.enabled
             }
         });
 
