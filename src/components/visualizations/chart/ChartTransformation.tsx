@@ -70,6 +70,7 @@ export default class ChartTransformation extends React.Component<IChartTransform
     };
 
     private chartOptions: IChartOptions;
+    private legend: any;
 
     public componentWillMount() {
         this.assignChartOptions(this.props);
@@ -80,7 +81,7 @@ export default class ChartTransformation extends React.Component<IChartTransform
     }
 
     public getRendererProps() {
-        const { chartOptions } = this;
+        const { chartOptions, legend } = this;
         const {
             executionRequest: { afm },
             height,
@@ -89,23 +90,10 @@ export default class ChartTransformation extends React.Component<IChartTransform
             config,
             onFiredDrillEvent,
             onLegendReady,
-            locale,
-            pushData
+            locale
         } = this.props;
         const drillConfig = { afm, onFiredDrillEvent };
         const hcOptions = getHighchartsOptions(chartOptions, drillConfig, config);
-
-        const legend = getLegend(config.legend, chartOptions);
-
-        pushData({
-            properties: {
-                controls: {
-                    legend: {
-                        visible: legend.enabled
-                    }
-                }
-            }
-        });
 
         return {
             chartOptions,
@@ -127,7 +115,8 @@ export default class ChartTransformation extends React.Component<IChartTransform
             executionResult: { data, headerItems },
             config,
             onDataTooLarge,
-            onNegativeValues
+            onNegativeValues,
+            pushData
         } = props;
 
         let multiDimensionalData = data;
@@ -159,6 +148,14 @@ export default class ChartTransformation extends React.Component<IChartTransform
             onNegativeValues(this.chartOptions);
         }
         this.setState(validationResult);
+
+        this.legend = getLegend(config.legend, this.chartOptions);
+
+        pushData({
+            propertiesMeta: {
+                legendVisible: this.legend.enabled
+            }
+        });
 
         return this.chartOptions;
     }
