@@ -308,7 +308,11 @@ export function getColorPalette(
     }
 
     if (isAttributeColorPalette(type, afm, stackByAttribute)) {
-        const itemsCount = stackByAttribute ? stackByAttribute.items.length : viewByAttribute.items.length;
+        const itemsCount = stackByAttribute
+            ? stackByAttribute.items.length
+            : viewByAttribute
+            ? viewByAttribute.items.length
+            : 0;
         return range(itemsCount).map(itemIndex => colorPalette[itemIndex % colorPalette.length]);
     }
 
@@ -485,7 +489,7 @@ function getCountOfEmptyBuckets(bucketEmptyFlags: boolean[] = []) {
 
 export function getBubbleChartSeries(
     executionResultData: Execution.DataValue[][],
-    stackByAttribute: any,
+    viewByAttribute: any,
     mdObject: VisualizationObject.IVisualizationObjectContent,
     colorPalette: string[]
 ) {
@@ -511,7 +515,7 @@ export function getBubbleChartSeries(
             }];
         }
         return {
-            name: stackByAttribute ? stackByAttribute.items[index].attributeHeaderItem.name : '',
+            name: viewByAttribute ? viewByAttribute.items[index].attributeHeaderItem.name : '',
             color: colorPalette[index],
             legendIndex: index,
             data
@@ -716,7 +720,7 @@ export function getSeries(
     } else if (isScatterPlot(type)) {
         return getScatterPlotSeries(executionResultData, stackByAttribute, mdObject, colorPalette);
     } else if (isBubbleChart(type)) {
-        return getBubbleChartSeries(executionResultData, stackByAttribute, mdObject, colorPalette);
+        return getBubbleChartSeries(executionResultData, viewByAttribute, mdObject, colorPalette);
     } else if (isTreemap(type) && stackByAttribute) {
         return getTreemapStackedSeries(
             executionResultData,
@@ -1445,6 +1449,7 @@ export function getChartOptions(
             dimensions[STACK_BY_DIMENSION_INDEX],
             attributeHeaderItems[STACK_BY_DIMENSION_INDEX]
         );
+        stackByAttribute = null;
     } else {
         viewByAttribute = findAttributeInDimension(
             dimensions[VIEW_BY_DIMENSION_INDEX],

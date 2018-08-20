@@ -97,15 +97,15 @@ export default class ChartTransformation extends React.Component<IChartTransform
 
         const legend = getLegend(config.legend, chartOptions);
 
-        pushData({
-            properties: {
-                controls: {
-                    legend: {
-                        visible: legend.enabled
-                    }
-                }
-            }
-        });
+        // pushData({
+        //     properties: {
+        //         controls: {
+        //             legend: {
+        //                 visible: legend.enabled
+        //             }
+        //         }
+        //     }
+        // });
 
         return {
             chartOptions,
