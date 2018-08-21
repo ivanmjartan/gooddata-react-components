@@ -122,6 +122,8 @@ export default function getLegend(legendConfig: any = {}, chartOptions: any): IL
     if (legendConfig.position === 'auto' || !legendConfig.position) {
         if (isOneOfTypes(chartOptions.type, rightLegendCharts)) {
             set(defaultLegendConfigByType, 'position', 'right');
+        } else if (isHeatmap(chartOptions.type)) {
+            set(defaultLegendConfigByType, 'position', 'top');
         }
     }
 

@@ -119,4 +119,94 @@ storiesOf('Core components/LineChart', module)
                 />
             </div>
         )
+    ))
+    .add('with disabled legend', () => (
+        screenshotWrap(
+            <div style={wrapperStyle}>
+                <LineChart
+                    projectId="storybook"
+                    measures={[MEASURE_1, MEASURE_2]}
+                    trendBy={ATTRIBUTE_1_WITH_ALIAS}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            enabled: false
+                        }
+                    }}
+                />
+            </div>
+        )
+    ))
+    .add('with different legend positions', () => (
+        screenshotWrap(
+            <div style={wrapperStyle}>
+                <LineChart
+                    projectId="storybook"
+                    measures={[MEASURE_1, MEASURE_2]}
+                    trendBy={ATTRIBUTE_1_WITH_ALIAS}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'auto'
+                        }
+                    }}
+                />
+                <LineChart
+                    projectId="storybook"
+                    measures={[MEASURE_1, MEASURE_2]}
+                    trendBy={ATTRIBUTE_1_WITH_ALIAS}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'left'
+                        }
+                    }}
+                />
+                <LineChart
+                    projectId="storybook"
+                    measures={[MEASURE_1, MEASURE_2]}
+                    trendBy={ATTRIBUTE_1_WITH_ALIAS}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'top'
+                        }
+                    }}
+                />
+                <LineChart
+                    projectId="storybook"
+                    measures={[MEASURE_1, MEASURE_2]}
+                    trendBy={ATTRIBUTE_1_WITH_ALIAS}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'right'
+                        }
+                    }}
+                />
+                <LineChart
+                    projectId="storybook"
+                    measures={[MEASURE_1, MEASURE_2]}
+                    trendBy={ATTRIBUTE_1_WITH_ALIAS}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }}
+                />
+            </div>
+        )
     ));

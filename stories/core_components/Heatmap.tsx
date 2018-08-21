@@ -103,7 +103,7 @@ storiesOf('Core components/Heatmap', module)
             </div>
         )
     ))
-    .add('with legend on top', () => (
+    .add('with disabled legend', () => (
         screenshotWrap(
             <div style={wrapperStyle}>
                 <Heatmap
@@ -111,10 +111,90 @@ storiesOf('Core components/Heatmap', module)
                     measure={MEASURE_1}
                     segmentBy={ATTRIBUTE_1}
                     trendBy={ATTRIBUTE_2}
-                    config={{ legend: { position: 'top' } }}
                     onError={onErrorHandler}
                     LoadingComponent={null}
                     ErrorComponent={null}
+                    config={{
+                        legend: {
+                            enabled: false
+                        }
+                    }}
+                />
+            </div>
+        )
+    ))
+    .add('with different legend positions', () => (
+        screenshotWrap(
+            <div style={wrapperStyle}>
+                <Heatmap
+                    projectId="storybook"
+                    measure={MEASURE_1}
+                    segmentBy={ATTRIBUTE_1}
+                    trendBy={ATTRIBUTE_2}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'auto'
+                        }
+                    }}
+                />
+                <Heatmap
+                    projectId="storybook"
+                    measure={MEASURE_1}
+                    segmentBy={ATTRIBUTE_1}
+                    trendBy={ATTRIBUTE_2}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'left'
+                        }
+                    }}
+                />
+                <Heatmap
+                    projectId="storybook"
+                    measure={MEASURE_1}
+                    segmentBy={ATTRIBUTE_1}
+                    trendBy={ATTRIBUTE_2}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'top'
+                        }
+                    }}
+                />
+                <Heatmap
+                    projectId="storybook"
+                    measure={MEASURE_1}
+                    segmentBy={ATTRIBUTE_1}
+                    trendBy={ATTRIBUTE_2}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'right'
+                        }
+                    }}
+                />
+                <Heatmap
+                    projectId="storybook"
+                    measure={MEASURE_1}
+                    segmentBy={ATTRIBUTE_1}
+                    trendBy={ATTRIBUTE_2}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }}
                 />
             </div>
         )

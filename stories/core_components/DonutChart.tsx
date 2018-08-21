@@ -86,4 +86,94 @@ storiesOf('Core components/DonutChart', module)
                 />
             </div>
         )
+    ))
+    .add('with disabled legend', () => (
+        screenshotWrap(
+            <div style={wrapperStyle}>
+                <DonutChart
+                    projectId="storybook"
+                    measures={[MEASURE_1]}
+                    viewBy={ATTRIBUTE_1}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            enabled: false
+                        }
+                    }}
+                />
+            </div>
+        )
+    ))
+    .add('with different legend positions', () => (
+        screenshotWrap(
+            <div style={wrapperStyle}>
+                <DonutChart
+                    projectId="storybook"
+                    measures={[MEASURE_1]}
+                    viewBy={ATTRIBUTE_1}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'auto'
+                        }
+                    }}
+                />
+                <DonutChart
+                    projectId="storybook"
+                    measures={[MEASURE_1]}
+                    viewBy={ATTRIBUTE_1}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'left'
+                        }
+                    }}
+                />
+                <DonutChart
+                    projectId="storybook"
+                    measures={[MEASURE_1]}
+                    viewBy={ATTRIBUTE_1}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'top'
+                        }
+                    }}
+                />
+                <DonutChart
+                    projectId="storybook"
+                    measures={[MEASURE_1]}
+                    viewBy={ATTRIBUTE_1}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'right'
+                        }
+                    }}
+                />
+                <DonutChart
+                    projectId="storybook"
+                    measures={[MEASURE_1]}
+                    viewBy={ATTRIBUTE_1}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }}
+                />
+            </div>
+        )
     ));

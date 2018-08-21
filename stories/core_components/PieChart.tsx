@@ -86,4 +86,98 @@ storiesOf('Core components/PieChart', module)
                 />
             </div>
         )
+    ))
+    .add('with disabled legend', () => (
+        screenshotWrap(
+            <div style={wrapperStyle}>
+                <PieChart
+                    projectId="storybook"
+                    measures={[MEASURE_1]}
+                    viewBy={ATTRIBUTE_1}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            enabled: false
+                        }
+                    }}
+                />
+            </div>
+        )
+    ))
+    .add('with different legend positions', () => (
+        screenshotWrap(
+            <div style={wrapperStyle}>
+                <PieChart
+                    projectId="storybook"
+                    measures={[MEASURE_1]}
+                    viewBy={ATTRIBUTE_1}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'auto'
+                        }
+                    }}
+                />
+
+                <PieChart
+                    projectId="storybook"
+                    measures={[MEASURE_1]}
+                    viewBy={ATTRIBUTE_1}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'left'
+                        }
+                    }}
+                />
+
+                <PieChart
+                    projectId="storybook"
+                    measures={[MEASURE_1]}
+                    viewBy={ATTRIBUTE_1}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'top'
+                        }
+                    }}
+                />
+
+                <PieChart
+                    projectId="storybook"
+                    measures={[MEASURE_1]}
+                    viewBy={ATTRIBUTE_1}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'right'
+                        }
+                    }}
+                />
+
+                <PieChart
+                    projectId="storybook"
+                    measures={[MEASURE_1]}
+                    viewBy={ATTRIBUTE_1}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                    config={{
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }}
+                />
+            </div>
+        )
     ));
