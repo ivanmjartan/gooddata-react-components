@@ -117,13 +117,12 @@ export function getLegendItems(chartOptions: any): LegendOptionsItemType[] {
 
 export default function getLegend(legendConfig: any = {}, chartOptions: any): ILegendOptions {
     const defaultLegendConfigByType = {};
-    const rightLegendCharts = [VisualizationTypes.SCATTER, VisualizationTypes.TREEMAP, VisualizationTypes.BUBBLE];
+    const rightLegendCharts =
+        [VisualizationTypes.SCATTER, VisualizationTypes.TREEMAP, VisualizationTypes.BUBBLE, VisualizationTypes.HEATMAP];
 
     if (legendConfig.position === 'auto' || !legendConfig.position) {
         if (isOneOfTypes(chartOptions.type, rightLegendCharts)) {
             set(defaultLegendConfigByType, 'position', 'right');
-        } else if (isHeatmap(chartOptions.type)) {
-            set(defaultLegendConfigByType, 'position', 'top');
         }
     }
 
