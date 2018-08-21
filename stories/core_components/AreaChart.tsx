@@ -4,7 +4,8 @@ import { screenshotWrap } from '@gooddata/test-storybook';
 
 import { AreaChart } from '../../src/index';
 import { onErrorHandler } from '../mocks';
-import { ATTRIBUTE_1,
+import {
+    ATTRIBUTE_1,
     ATTRIBUTE_2,
     MEASURE_1,
     MEASURE_2,
@@ -171,4 +172,97 @@ storiesOf('Core components/AreaChart', module)
                 />
             </div>
         )
-    ));
+    ))
+    .add('with disabled legend', () => (
+        screenshotWrap(
+            <div style={wrapperStyle}>
+                <AreaChart
+                    projectId="storybook"
+                    measures={[MEASURE_1, MEASURE_2]}
+                    viewBy={[ATTRIBUTE_1]}
+                    config={{
+                        legend: {
+                            enabled: false
+                        }
+                    }}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                />
+            </div>
+        )
+    )).add('with different legend positions', () => (
+        screenshotWrap(
+            <div style={wrapperStyle}>
+                <AreaChart
+                    projectId="storybook"
+                    measures={[MEASURE_1, MEASURE_2]}
+                    viewBy={[ATTRIBUTE_1]}
+                    config={{
+                        legend: {
+                            position: 'auto'
+                        }
+                    }}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                />
+
+                <AreaChart
+                    projectId="storybook"
+                    measures={[MEASURE_1, MEASURE_2]}
+                    viewBy={[ATTRIBUTE_1]}
+                    config={{
+                        legend: {
+                            position: 'left'
+                        }
+                    }}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                />
+
+                <AreaChart
+                    projectId="storybook"
+                    measures={[MEASURE_1, MEASURE_2]}
+                    viewBy={[ATTRIBUTE_1]}
+                    config={{
+                        legend: {
+                            position: 'top'
+                        }
+                    }}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                />
+
+                <AreaChart
+                    projectId="storybook"
+                    measures={[MEASURE_1, MEASURE_2]}
+                    viewBy={[ATTRIBUTE_1]}
+                    config={{
+                        legend: {
+                            position: 'right'
+                        }
+                    }}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                />
+
+                <AreaChart
+                    projectId="storybook"
+                    measures={[MEASURE_1, MEASURE_2]}
+                    viewBy={[ATTRIBUTE_1]}
+                    config={{
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }}
+                    onError={onErrorHandler}
+                    LoadingComponent={null}
+                    ErrorComponent={null}
+                />
+            </div>
+        ))
+    );
