@@ -57,21 +57,6 @@ storiesOf('Core components/PieChart', module)
             </div>
         )
     ))
-    .add('legend on the bottom', () => (
-        screenshotWrap(
-            <div style={wrapperStyle}>
-                <PieChart
-                    projectId="storybook"
-                    measures={[MEASURE_1]}
-                    viewBy={ATTRIBUTE_1}
-                    config={{ legend: { position: 'bottom' } }}
-                    onError={onErrorHandler}
-                    LoadingComponent={null}
-                    ErrorComponent={null}
-                />
-            </div>
-        )
-    ))
     .add('with German number format in tooltip', () => (
         screenshotWrap(
             <div style={wrapperStyle}>

@@ -81,19 +81,6 @@ storiesOf('Core components/Treemap', module)
             </div>
         )
     ))
-    .add('legend on the bottom', () => (
-        screenshotWrap(
-            <div style={wrapperStyle}>
-                <Treemap
-                    projectId="storybook"
-                    measures={[MEASURE_1]}
-                    viewBy={ATTRIBUTE_1}
-                    config={{ legend: { position: 'bottom' } }}
-                    onError={onErrorHandler}
-                />
-            </div>
-        )
-    ))
     .add('all default colors', () => (
         screenshotWrap(
             <div style={{ width: 1900, height: 1200 }}>
