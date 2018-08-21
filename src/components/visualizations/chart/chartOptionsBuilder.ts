@@ -308,11 +308,7 @@ export function getColorPalette(
     }
 
     if (isAttributeColorPalette(type, afm, stackByAttribute)) {
-        const itemsCount = stackByAttribute
-            ? stackByAttribute.items.length
-            : viewByAttribute
-            ? viewByAttribute.items.length
-            : 0;
+        const itemsCount = stackByAttribute ? stackByAttribute.items.length : viewByAttribute.items.length;
         return range(itemsCount).map(itemIndex => colorPalette[itemIndex % colorPalette.length]);
     }
 
@@ -489,7 +485,7 @@ function getCountOfEmptyBuckets(bucketEmptyFlags: boolean[] = []) {
 
 export function getBubbleChartSeries(
     executionResultData: Execution.DataValue[][],
-    viewByAttribute: any,
+    stackByAttribute: any,
     mdObject: VisualizationObject.IVisualizationObjectContent,
     colorPalette: string[]
 ) {
@@ -515,7 +511,7 @@ export function getBubbleChartSeries(
             }];
         }
         return {
-            name: viewByAttribute ? viewByAttribute.items[index].attributeHeaderItem.name : '',
+            name: stackByAttribute ? stackByAttribute.items[index].attributeHeaderItem.name : '',
             color: colorPalette[index],
             legendIndex: index,
             data
@@ -720,7 +716,7 @@ export function getSeries(
     } else if (isScatterPlot(type)) {
         return getScatterPlotSeries(executionResultData, stackByAttribute, mdObject, colorPalette);
     } else if (isBubbleChart(type)) {
-        return getBubbleChartSeries(executionResultData, viewByAttribute, mdObject, colorPalette);
+        return getBubbleChartSeries(executionResultData, stackByAttribute, mdObject, colorPalette);
     } else if (isTreemap(type) && stackByAttribute) {
         return getTreemapStackedSeries(
             executionResultData,
@@ -1444,12 +1440,6 @@ export function getChartOptions(
         );
         viewByAttribute = treemapViewByAttribute;
         stackByAttribute = treemapStackByAttribute;
-    } else if (isBubbleChart(type)) {
-        viewByAttribute = findAttributeInDimension(
-            dimensions[STACK_BY_DIMENSION_INDEX],
-            attributeHeaderItems[STACK_BY_DIMENSION_INDEX]
-        );
-        stackByAttribute = null;
     } else {
         viewByAttribute = findAttributeInDimension(
             dimensions[VIEW_BY_DIMENSION_INDEX],
@@ -1630,7 +1620,7 @@ export function getChartOptions(
         return {
             type,
             stacking,
-            hasViewByAttribute: Boolean(viewByAttribute),
+            hasViewByAttribute: Boolean(stackByAttribute),
             legendLayout: 'horizontal',
             colorPalette,
             yAxes,
