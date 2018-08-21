@@ -6,6 +6,7 @@ import { VisualizationObject } from '@gooddata/typings';
 import { initChartPlugins } from './highcharts/chartPlugins';
 import { VisType } from '../../../constants/visualizationTypes';
 import { ISeparators } from '@gooddata/numberjs';
+import { PositionType } from './legend/PositionTypes';
 
 // Have only one entrypoint to highcharts and drill module
 // tslint:disable-next-line
@@ -24,7 +25,7 @@ initChartPlugins(Highcharts);
 
 export interface ILegendConfig {
     enabled?: boolean;
-    position?: 'top' | 'left' | 'right' | 'bottom';
+    position?: PositionType;
     responsive?: boolean;
 }
 

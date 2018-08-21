@@ -159,6 +159,18 @@ storiesOf('Core components/Treemap', module)
                     onError={onErrorHandler}
                     config={{
                         legend: {
+                            position: 'auto'
+                        }
+                    }}
+                />
+
+                <Treemap
+                    projectId="storybook"
+                    measures={[MEASURE_1]}
+                    viewBy={ATTRIBUTE_1}
+                    onError={onErrorHandler}
+                    config={{
+                        legend: {
                             position: 'left'
                         }
                     }}
