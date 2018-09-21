@@ -36,7 +36,7 @@ import { getChartProperties } from './highcharts/helpers';
 import { unwrap } from '../../../helpers/utils';
 
 import { getMeasureUriOrIdentifier, isDrillable } from '../utils/drilldownEventing';
-import { DEFAULT_COLOR_PALETTE, HEATMAP_BLUE_COLOR_PALETTE, getLighterColor } from '../utils/color';
+import { getLighterColor } from '../utils/color';
 import { isDataOfReasonableSize } from './highChartsCreators';
 import {
     VIEW_BY_DIMENSION_INDEX,
@@ -74,14 +74,6 @@ const unsupportedNegativeValuesTypes = [
     VisualizationTypes.DONUT,
     VisualizationTypes.FUNNEL,
     VisualizationTypes.TREEMAP
-];
-
-const attributeChartSupportedTypes = [
-    VisualizationTypes.PIE,
-    VisualizationTypes.DONUT,
-    VisualizationTypes.FUNNEL,
-    VisualizationTypes.SCATTER,
-    VisualizationTypes.BUBBLE
 ];
 
 // charts sorted by default by measure value
@@ -217,13 +209,6 @@ export function isDerivedMeasure(measureItem: Execution.IMeasureHeaderItem, afm:
     });
 }
 
-export function normalizeColorToRGB(color: string) {
-    const hexPattern = /#([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})/i;
-    return color.replace(hexPattern, (_prefix: string, r: string, g: string, b: string) => {
-        return `rgb(${[r, g, b].map(value => (parseInt(value, 16).toString(10))).join(', ')})`;
-    });
-}
-
 function findMeasureIndex(afm: AFM.IAfm, measureIdentifier: string): number {
     return afm.measures.findIndex(
         (measure: AFM.IMeasure) => measure.localIdentifier === measureIdentifier
@@ -243,79 +228,6 @@ export function findParentMeasureIndex(afm: AFM.IAfm, measureItemIndex: number):
     }
 
     return -1;
-}
-
-export function isAttributeColorPalette(type: string, afm: AFM.IAfm, stackByAttribute: any) {
-    const attributeChartSupported = isOneOfTypes(type, attributeChartSupportedTypes);
-
-    return stackByAttribute || (attributeChartSupported && afm.attributes && afm.attributes.length > 0);
-}
-
-function getColorPaletteByMeasureGroup(
-    colorPalette: string[] = DEFAULT_COLOR_PALETTE,
-    measureGroup: Execution.IMeasureGroupHeader['measureGroupHeader'],
-    afm: AFM.IAfm
-): string[] {
-    let parentMeasuresCounter = 0;
-
-    const paletteMeasures = range(measureGroup.items.length).map((measureItemIndex) => {
-        if (isDerivedMeasure(measureGroup.items[measureItemIndex], afm)) {
-            return '';
-        }
-        const colorIndex = parentMeasuresCounter % colorPalette.length;
-        parentMeasuresCounter++;
-        return colorPalette[colorIndex];
-    });
-
-    return paletteMeasures.map((color, measureItemIndex) => {
-        if (!isDerivedMeasure(measureGroup.items[measureItemIndex], afm)) {
-            return color;
-        }
-        const parentMeasureIndex = findParentMeasureIndex(afm, measureItemIndex);
-        if (parentMeasureIndex > -1) {
-            const sourceMeasureColor = paletteMeasures[parentMeasureIndex];
-            return getLighterColor(normalizeColorToRGB(sourceMeasureColor), 0.6);
-        }
-        return color;
-    });
-}
-
-function getTreemapColorPalette(
-    colorPalette: string[] = DEFAULT_COLOR_PALETTE,
-    measureGroup: Execution.IMeasureGroupHeader['measureGroupHeader'],
-    viewByAttribute: any,
-    afm: AFM.IAfm
-): string[] {
-    if (viewByAttribute) {
-        const itemsCount = viewByAttribute.items.length;
-        return range(itemsCount).map(itemIndex => colorPalette[itemIndex % colorPalette.length]);
-    }
-    return getColorPaletteByMeasureGroup(colorPalette, measureGroup, afm);
-}
-
-export function getColorPalette(
-    colorPalette: string[] = DEFAULT_COLOR_PALETTE,
-    measureGroup: Execution.IMeasureGroupHeader['measureGroupHeader'],
-    viewByAttribute: any,
-    stackByAttribute: any,
-    afm: AFM.IAfm,
-    type: string
-): string[] {
-
-    if (isHeatmap(type)) {
-        return HEATMAP_BLUE_COLOR_PALETTE;
-    }
-
-    if (isTreemap(type)) {
-        return getTreemapColorPalette(colorPalette, measureGroup, viewByAttribute, afm);
-    }
-
-    if (isAttributeColorPalette(type, afm, stackByAttribute)) {
-        const itemsCount = stackByAttribute ? stackByAttribute.items.length : viewByAttribute.items.length;
-        return range(itemsCount).map(itemIndex => colorPalette[itemIndex % colorPalette.length]);
-    }
-
-    return getColorPaletteByMeasureGroup(colorPalette, measureGroup, afm);
 }
 
 export interface IPointData {
