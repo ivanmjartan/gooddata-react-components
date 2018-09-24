@@ -34,11 +34,11 @@ describe('ChartTransformation', () => {
         expect(renderer).toHaveBeenCalledTimes(1);
     });
 
-    /* it('should use custom color palette', () => {
+    it('should use custom color palette', () => {
         let colorPalette;
         const customColors = ['#000000', '#ff0000'];
         const renderer = (params: any) => {
-            colorPalette = params.chartOptions.colorPalette;
+            colorPalette = params.chartOptions.data.series.map((serie: any) => serie.color);
             return <div />;
         };
         const componentProps = {
@@ -51,7 +51,7 @@ describe('ChartTransformation', () => {
         };
         mount(createComponent(componentProps));
         expect(colorPalette).toEqual(customColors);
-    }); */
+    });
 
     describe('Stacking config', () => {
         const defaultConfig = {

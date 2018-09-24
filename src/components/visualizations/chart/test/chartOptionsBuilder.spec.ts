@@ -25,7 +25,7 @@ import {
     isDerivedMeasure
 } from '../chartOptionsBuilder';
 import { DEFAULT_CATEGORIES_LIMIT } from '../highcharts/commonConfiguration';
-import { generateChartOptions } from './helper';
+import { generateChartOptions, getMVS } from './helper';
 
 import * as fixtures from '../../../../../stories/test_data/fixtures';
 
@@ -47,27 +47,6 @@ import { TreeMapColorStrategy,
 } from '../colorFactory';
 
 export { IPoint };
-
-function getMVS(dataSet: any) {
-    const {
-        executionResponse: { dimensions },
-        executionResult: { headerItems }
-    } = dataSet;
-    const measureGroup = findMeasureGroupInDimensions(dimensions);
-    const viewByAttribute = findAttributeInDimension(
-        dimensions[VIEW_BY_DIMENSION_INDEX],
-        headerItems[VIEW_BY_DIMENSION_INDEX]
-    );
-    const stackByAttribute = findAttributeInDimension(
-        dimensions[STACK_BY_DIMENSION_INDEX],
-        headerItems[STACK_BY_DIMENSION_INDEX]
-    );
-    return [
-        measureGroup,
-        viewByAttribute,
-        stackByAttribute
-    ];
-}
 
 function getMVSTreemap(dataSet: any) {
     const {
@@ -906,24 +885,25 @@ describe('chartOptionsBuilder', () => {
                 ]
             };
 
+            const stackByAttribute = {
+                items: [
+                    {
+                        attributeHeaderItem: {
+                            name: 'abc'
+                        }
+                    }, {
+                        attributeHeaderItem: {
+                            name: 'def'
+                        }
+                    }
+                ]
+            };
+
             it('should fill X, Y and Z with valid values when measure buckets are not empty', () => {
                 const executionResultData = [
                     [ 1, 2, 3],
                     [ 4, 5, 6]
                 ];
-                const stackByAttribute = {
-                    items: [
-                        {
-                            attributeHeaderItem: {
-                                name: 'abc'
-                            }
-                        }, {
-                            attributeHeaderItem: {
-                                name: 'def'
-                            }
-                        }
-                    ]
-                };
 
                 const mdObject = {
                     visualizationClass: { uri: 'abc' },
@@ -981,21 +961,6 @@ describe('chartOptionsBuilder', () => {
                     [6]
                 ];
 
-                const stackByAttribute = {
-                    items: [
-                        {
-                            attributeHeaderItem: {
-                                name: 'abc'
-                            }
-                        },
-                        {
-                            attributeHeaderItem: {
-                                name: 'dse'
-                            }
-                        }
-                    ]
-                };
-
                 const mdObject = {
                     visualizationClass: { uri: 'abc' },
                     buckets: [{
@@ -1043,19 +1008,6 @@ describe('chartOptionsBuilder', () => {
                     [ 1, 3],
                     [ 4, 6]
                 ];
-                const stackByAttribute = {
-                    items: [
-                        {
-                            attributeHeaderItem: {
-                                name: 'abc'
-                            }
-                        }, {
-                            attributeHeaderItem: {
-                                name: 'def'
-                            }
-                        }
-                    ]
-                };
 
                 const mdObject = {
                     visualizationClass: { uri: 'abc' },
@@ -1109,19 +1061,6 @@ describe('chartOptionsBuilder', () => {
                     [1, 3],
                     [4, 6]
                 ];
-                const stackByAttribute = {
-                    items: [
-                        {
-                            attributeHeaderItem: {
-                                name: 'abc'
-                            }
-                        }, {
-                            attributeHeaderItem: {
-                                name: 'def'
-                            }
-                        }
-                    ]
-                };
 
                 const mdObject = {
                     visualizationClass: { uri: 'abc' },
@@ -1176,20 +1115,6 @@ describe('chartOptionsBuilder', () => {
                     [4, 6]
                 ];
 
-                const stackByAttribute = {
-                    items: [
-                        {
-                            attributeHeaderItem: {
-                                name: 'abc'
-                            }
-                        }, {
-                            attributeHeaderItem: {
-                                name: 'def'
-                            }
-                        }
-                    ]
-                };
-
                 const mdObject = {
                     visualizationClass: { uri: 'abc' },
                     buckets: [
@@ -1243,7 +1168,7 @@ describe('chartOptionsBuilder', () => {
                     [4, null, 6],
                     [7, 8, null]
                 ];
-                const stackByAttribute = {
+                const stackByAttributeWithThreeElements = {
                     items: [
                         {
                             attributeHeaderItem: {
@@ -1300,14 +1225,14 @@ describe('chartOptionsBuilder', () => {
                     colorPallete,
                     dummyMeasureGroup,
                     null,
-                    stackByAttribute,
+                    stackByAttributeWithThreeElements,
                     null
                 );
 
                 const series = getBubbleChartSeries(
                     executionResultData,
                     dummyMeasureGroup,
-                    stackByAttribute,
+                    stackByAttributeWithThreeElements,
                     mdObject,
                     attributeColorStrategy
                 );
@@ -2660,6 +2585,11 @@ describe('chartOptionsBuilder', () => {
                 expect(chartOptions.data.categories).toEqual(['<button>2008</button>', '2009', '2010', '2011', '2012']);
             });
 
+            it('should assign 3 colors from default colorPalette', () => {
+                const seriesColors = chartOptions.data.series.map((serie: any) => serie.color);
+                expect(seriesColors).toEqual(DEFAULT_COLOR_PALETTE.slice(0, 3));
+            });
+
             it('should assign correct tooltip function', () => {
                 const mVS = getMVS(dataSet);
                 const viewByAttribute = mVS[1];
@@ -2820,6 +2750,11 @@ describe('chartOptionsBuilder', () => {
 
             it('should assign categories ', () => {
                 expect(chartOptions.data.categories).toEqual(['2008', '2009', '2010', '2011', '2012', '2013']);
+            });
+
+            it('should assign updated color for pop measure', () => {
+                expect(chartOptions.data.series[0].color).toEqual('rgb(161,224,243)');
+                expect(chartOptions.data.series[1].color).toEqual('rgb(20,178,226)');
             });
 
             it('should assign correct tooltip function for pop measure', () => {

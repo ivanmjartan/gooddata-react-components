@@ -7,40 +7,11 @@ import {
     IColorStrategy
 } from '../colorFactory';
 
+import { getMVS } from './helper';
+
 import { DEFAULT_COLOR_PALETTE, HEATMAP_BLUE_COLOR_PALETTE } from '../../utils/color';
 
 import * as fixtures from '../../../../../stories/test_data/fixtures';
-
-import {
-    VIEW_BY_DIMENSION_INDEX,
-    STACK_BY_DIMENSION_INDEX
-} from '../constants';
-
-import {
-    findMeasureGroupInDimensions,
-    findAttributeInDimension
-} from '../chartOptionsBuilder';
-
-function getMVS(dataSet: any) {
-    const {
-        executionResponse: { dimensions },
-        executionResult: { headerItems }
-    } = dataSet;
-    const measureGroup = findMeasureGroupInDimensions(dimensions);
-    const viewByAttribute = findAttributeInDimension(
-        dimensions[VIEW_BY_DIMENSION_INDEX],
-        headerItems[VIEW_BY_DIMENSION_INDEX]
-    );
-    const stackByAttribute = findAttributeInDimension(
-        dimensions[STACK_BY_DIMENSION_INDEX],
-        headerItems[STACK_BY_DIMENSION_INDEX]
-    );
-    return [
-        measureGroup,
-        viewByAttribute,
-        stackByAttribute
-    ];
-}
 
 function getColorsFromStrategy(strategy: IColorStrategy): string[] {
     const res: string[] = [];
@@ -65,7 +36,7 @@ describe('ColorFactory', () => {
             getMVS(fixtures.barChartWithStackByAndViewByAttributes);
         const { afm } = fixtures.barChartWithStackByAndViewByAttributes.executionRequest;
         const type = 'bar';
-        const colorPalette: any = undefined;
+        const colorPalette: string[] = undefined;
 
         const colorStrategy = ColorFactory.getColorStrategy(
             colorPalette,
@@ -109,7 +80,7 @@ describe('ColorFactory', () => {
             getMVS(fixtures.treemapWithMetricViewByAndStackByAttribute);
         const { afm } = fixtures.treemapWithMetricViewByAndStackByAttribute.executionRequest;
         const type = 'treemap';
-        const colorPalette: any = undefined;
+        const colorPalette: string[] = undefined;
 
         const colorStrategy = ColorFactory.getColorStrategy(
             colorPalette,
@@ -131,7 +102,7 @@ describe('ColorFactory', () => {
             getMVS(fixtures.heatmapMetricRowColumn);
         const { afm } = fixtures.heatmapMetricRowColumn.executionRequest;
         const type = 'heatmap';
-        const colorPalette: any = undefined;
+        const colorPalette: string[] = undefined;
 
         const colorStrategy = ColorFactory.getColorStrategy(
             colorPalette,
@@ -157,7 +128,7 @@ describe('ColorFactory', () => {
             const [measureGroup, viewByAttribute, stackByAttribute] = getMVS(fixtures.barChartWithoutAttributes);
             const { afm } = fixtures.barChartWithoutAttributes.executionRequest;
             const type = 'column';
-            const colorPalette: any = undefined;
+            const colorPalette: string[] = undefined;
 
             const colorStrategy = ColorFactory.getColorStrategy(
                 colorPalette,
