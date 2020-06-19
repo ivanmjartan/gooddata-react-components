@@ -8,6 +8,9 @@ import {
     isMeasureLocatorItem,
     isMeasureColumnWidthItem,
     isAllMeasureColumnWidthItem,
+    isWeakMeasureColumnWidthItem,
+    IWeakMeasureColumnWidthItem,
+    isAbsoluteColumnWidth,
 } from "../../../../interfaces/PivotTable";
 
 import {
@@ -85,6 +88,23 @@ function removeInvalidLocators(
     });
 }
 
+function transformToWeakMeasureColumnWidthItem(
+    columnWidth: IMeasureColumnWidthItem,
+): IWeakMeasureColumnWidthItem {
+    if (
+        isAbsoluteColumnWidth(columnWidth.measureColumnWidthItem.width) &&
+        columnWidth.measureColumnWidthItem.locators.length === 1 &&
+        isMeasureLocatorItem(columnWidth.measureColumnWidthItem.locators[0])
+    ) {
+        return {
+            measureColumnWidthItem: {
+                width: columnWidth.measureColumnWidthItem.width,
+                locator: columnWidth.measureColumnWidthItem.locators.filter(isMeasureLocatorItem)[0],
+            },
+        };
+    }
+}
+
 // removes attribute widthItems with invalid identifiers
 // removes measure widthItems with invalid identifiers and invalid number of locators
 function adaptWidthItemsToPivotTable(
@@ -93,6 +113,7 @@ function adaptWidthItemsToPivotTable(
     rowAttributeLocalIdentifiers: string[],
     columnAttributeLocalIdentifiers: string[],
     filters: IBucketFilter[],
+    firstColumnAttributeAdded: boolean,
 ): ColumnWidthItem[] {
     const attributeLocalIdentifiers = [...rowAttributeLocalIdentifiers, ...columnAttributeLocalIdentifiers];
 
@@ -119,13 +140,24 @@ function adaptWidthItemsToPivotTable(
             ) {
                 return [...columnWidths, filteredMeasureColumnWidthItem];
             }
+
+            // TODO INE: test this
+            if (firstColumnAttributeAdded) {
+                const transformedWeakMeasureWidthItem = transformToWeakMeasureColumnWidthItem(columnWidth);
+                if (transformedWeakMeasureWidthItem) {
+                    return [...columnWidths, transformedWeakMeasureWidthItem];
+                }
+            }
         } else if (isAttributeColumnWidthItem(columnWidth)) {
             if (
                 includes(attributeLocalIdentifiers, columnWidth.attributeColumnWidthItem.attributeIdentifier)
             ) {
                 return [...columnWidths, columnWidth];
             }
-        } else if (isAllMeasureColumnWidthItem(columnWidth) && measureLocalIdentifiers.length > 0) {
+        } else if (
+            (isAllMeasureColumnWidthItem(columnWidth) || isWeakMeasureColumnWidthItem(columnWidth)) &&
+            measureLocalIdentifiers.length > 0
+        ) {
             return [...columnWidths, columnWidth];
         }
 
@@ -162,11 +194,14 @@ export function adaptReferencePointWidthItemsToPivotTable(
             !previousRowAttributeLocalIdentifiers.includes(columnAttributeLocalIdentifier),
     );
 
+    const firstColumnAttributeAdded = previousColumnAttributes.length === 0 && columnAttributes.length === 1;
+
     return adaptWidthItemsToPivotTable(
         originalColumnWidths,
         measureLocalIdentifiers,
         filteredRowAttributeLocalIdentifiers,
         filteredColumnAttributeLocalIdentifiers,
         filters,
+        firstColumnAttributeAdded,
     );
 }

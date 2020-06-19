@@ -24,14 +24,17 @@ import {
     isAttributeColumnWidthItem,
     ColumnWidthItem,
     isMeasureColumnWidthItem,
-    ColumnEventSourceType,
     IResizedColumns,
     ColumnWidth,
     isAbsoluteColumnWidth,
 } from "../../../interfaces/PivotTable";
 import { IGridHeader } from "./agGridTypes";
 import { ColumnApi, Column } from "ag-grid-community";
-import { ResizedColumnsStore, IResizedColumnsCollection } from "./ResizedColumnsStore";
+import {
+    ResizedColumnsStore,
+    IResizedColumnsCollection,
+    IWeakMeasureColumnWidthItemsMap,
+} from "./ResizedColumnsStore";
 
 export const MIN_WIDTH = 60;
 export const AUTO_SIZED_MAX_WIDTH = 500;
@@ -58,14 +61,14 @@ export const convertColumnWidthsToMap = (
             const [field, width] = getAttributeColumnWidthItemFieldAndWidth(columnWidth, attributeHeaders);
             columnWidthsMap[field] = {
                 width: widthValidator(width),
-                source: ColumnEventSourceType.UI_DRAGGED,
             };
         }
         if (isMeasureColumnWidthItem(columnWidth)) {
             const [field, width] = getMeasureColumnWidthItemFieldAndWidth(columnWidth, measureHeaderItems);
             columnWidthsMap[field] = {
                 width: widthValidator(width),
-                source: ColumnEventSourceType.UI_DRAGGED,
+                measureIdentifier: columnWidth.measureColumnWidthItem.locators.filter(isMeasureLocatorItem)[0]
+                    .measureLocatorItem.measureIdentifier,
             };
         }
     });
@@ -198,6 +201,12 @@ export const getColumnWidthsFromMap = (
     });
 };
 
+export const getWeakColumnWidthsFromMap = (map: IWeakMeasureColumnWidthItemsMap): ColumnWidthItem[] => {
+    return Object.keys(map).map((measureIdentifier: string) => {
+        return map[measureIdentifier];
+    });
+};
+
 export const defaultWidthValidator = (width: ColumnWidth): ColumnWidth => {
     if (isAbsoluteColumnWidth(width)) {
         return {
@@ -303,7 +312,22 @@ export const resizeAllMeasuresColumns = (
             columnApi.setColumnWidth(col, columnWidth);
         }
     });
-    resizedColumnsStore.addAllMeasureColumns(columnWidth, allColumns);
+    resizedColumnsStore.addAllMeasureColumn(columnWidth, allColumns);
+};
+
+export const resizeWeakMeasureColumns = (
+    columnApi: ColumnApi,
+    resizedColumnsStore: ResizedColumnsStore,
+    column: Column,
+) => {
+    const allColumns = columnApi.getAllColumns();
+    resizedColumnsStore.addWeekMeasureColumn(column, allColumns);
+    allColumns.forEach(col => {
+        const weakColumnWidth = resizedColumnsStore.getMatchedWeakMeasuresColumnWidths(col);
+        if (isMeasureColumn(col) && weakColumnWidth) {
+            columnApi.setColumnWidth(col, weakColumnWidth.measureColumnWidthItem.width.value);
+        }
+    });
 };
 
 export const getAllowGrowToFitProp = (allowGrowToFit: boolean) => (allowGrowToFit ? { allowGrowToFit } : {});

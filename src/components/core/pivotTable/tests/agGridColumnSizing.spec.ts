@@ -8,12 +8,7 @@ import {
     syncSuppressSizeToFitOnColumns,
     resetColumnsWidthToDefault,
 } from "../agGridColumnSizing";
-import {
-    ColumnWidthItem,
-    ColumnEventSourceType,
-    IAbsoluteColumnWidth,
-    IResizedColumns,
-} from "../../../../interfaces/PivotTable";
+import { ColumnWidthItem, IAbsoluteColumnWidth, IResizedColumns } from "../../../../interfaces/PivotTable";
 import { IGridHeader } from "../agGridTypes";
 import { DEFAULT_COLUMN_WIDTH } from "../../PivotTable";
 import { Column, ColumnApi } from "ag-grid-community";
@@ -150,13 +145,12 @@ describe("agGridColumnSizing", () => {
             width: {
                 value: 60,
             },
-            source: ColumnEventSourceType.UI_DRAGGED,
+            measureIdentifier: "m1",
         },
         a_4DOTdf: {
             width: {
                 value: 400,
             },
-            source: ColumnEventSourceType.UI_DRAGGED,
         },
     };
 
@@ -165,13 +159,12 @@ describe("agGridColumnSizing", () => {
             width: {
                 value: MIN_WIDTH,
             },
-            source: ColumnEventSourceType.UI_DRAGGED,
+            measureIdentifier: "m1",
         },
         a_4DOTdf: {
             width: {
                 value: MAX_WIDTH,
             },
-            source: ColumnEventSourceType.UI_DRAGGED,
         },
     };
 
@@ -202,7 +195,6 @@ describe("agGridColumnSizing", () => {
                     width: {
                         value: 400,
                     },
-                    source: ColumnEventSourceType.UI_DRAGGED,
                 },
             };
             const { executionResponse } = oneColumnAttributeNoMeasureResponse;
@@ -330,15 +322,12 @@ describe("agGridColumnSizing", () => {
         const autoResizeColumns: IResizedColumns = {
             [amountId]: {
                 width: amountAutoWidth,
-                source: ColumnEventSourceType.AUTOSIZE_COLUMNS,
             },
             [coloursId]: {
                 width: coloursAutoWidth,
-                source: ColumnEventSourceType.AUTOSIZE_COLUMNS,
             },
             [biggerAmountId]: {
                 width: biggerAmountAutoWidth,
-                source: ColumnEventSourceType.AUTOSIZE_COLUMNS,
             },
         };
 
@@ -349,15 +338,12 @@ describe("agGridColumnSizing", () => {
         const growToFitResizeColumns: IResizedColumns = {
             [amountId]: {
                 width: amountGrowToFitWidth,
-                source: ColumnEventSourceType.FIT_GROW,
             },
             [coloursId]: {
                 width: coloursGrowToFitWidth,
-                source: ColumnEventSourceType.FIT_GROW,
             },
             [biggerAmountId]: {
                 width: biggerAmountGrowToFitWidth,
-                source: ColumnEventSourceType.FIT_GROW,
             },
         };
 
@@ -366,7 +352,7 @@ describe("agGridColumnSizing", () => {
         const getGrowToFitResizeColumnsOverLimit = () => {
             return {
                 ...growToFitResizeColumns,
-                [amountId]: { width: overLimitWidth, source: ColumnEventSourceType.FIT_GROW },
+                [amountId]: { width: overLimitWidth },
             };
         };
         describe("manually resized", () => {
@@ -704,11 +690,9 @@ describe("agGridColumnSizing", () => {
             const autoWidths = {
                 colId1: {
                     width: 150,
-                    source: ColumnEventSourceType.UI_DRAGGED,
                 },
                 colId2: {
                     width: 400,
-                    source: ColumnEventSourceType.UI_DRAGGED,
                 },
             };
             const defaultWidth = 250;
