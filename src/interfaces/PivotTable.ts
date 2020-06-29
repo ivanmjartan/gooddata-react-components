@@ -83,17 +83,18 @@ export interface IAllMeasureColumnWidthItem {
     };
 }
 
-export type ColumnWidthItem =
-    | IAttributeColumnWidthItem
-    | IMeasureColumnWidthItem
-    | IAllMeasureColumnWidthItem;
-
 export interface IWeakMeasureColumnWidthItem {
     measureColumnWidthItem: {
         width: IAbsoluteColumnWidth;
         locator: AFM.IMeasureLocatorItem;
     };
 }
+
+export type ColumnWidthItem =
+    | IAttributeColumnWidthItem
+    | IMeasureColumnWidthItem
+    | IAllMeasureColumnWidthItem
+    | IWeakMeasureColumnWidthItem;
 
 type LocatorItem = IAttributeLocatorItem | AFM.IMeasureLocatorItem;
 interface IAttributeLocatorItem {

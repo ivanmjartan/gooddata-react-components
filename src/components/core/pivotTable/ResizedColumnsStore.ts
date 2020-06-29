@@ -44,7 +44,6 @@ export function isColumnWidthAuto(columnWidth: ColumnWidth): boolean {
 export interface IWeakMeasureColumnWidthItemsMap {
     [measureIdentifier: string]: IWeakMeasureColumnWidthItem;
 }
-// TODO IMJ: unify private lists
 export class ResizedColumnsStore {
     private manuallyResizedColumns: IResizedColumnsCollection;
     private allMeasureColumnWidth: number | null;
