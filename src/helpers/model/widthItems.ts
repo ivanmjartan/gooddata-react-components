@@ -3,6 +3,7 @@ import {
     IAttributeColumnWidthItem,
     IMeasureColumnWidthItem,
     IAllMeasureColumnWidthItem,
+    IWeakMeasureColumnWidthItem,
 } from "../../interfaces/PivotTable";
 import { AFM } from "@gooddata/typings";
 import { getAllowGrowToFitProp } from "../../components/core/pivotTable/agGridColumnSizing";
@@ -69,6 +70,24 @@ export class MeasureColumnWidthItemBuilder implements IMeasureColumnWidthItem {
     };
 }
 
+export class WeakMeasureColumnWidthItemBuilder implements IWeakMeasureColumnWidthItem {
+    public measureColumnWidthItem: IWeakMeasureColumnWidthItem["measureColumnWidthItem"];
+
+    constructor(measureIdentifier: AFM.Identifier, width: number, allowGrowToFit: boolean = false) {
+        this.measureColumnWidthItem = {
+            width: {
+                value: width,
+                allowGrowToFit,
+            },
+            locator: {
+                measureLocatorItem: {
+                    measureIdentifier,
+                },
+            },
+        };
+    }
+}
+
 export class AllMeasureColumnWidthItemBuilder implements IAllMeasureColumnWidthItem {
     public measureColumnWidthItem: IAllMeasureColumnWidthItem["measureColumnWidthItem"];
 
@@ -91,3 +110,9 @@ export const measureColumnWidthItem = (
 ) => new MeasureColumnWidthItemBuilder(measureIdentifier, width, allowGrowToFit);
 
 export const allMeasureColumnWidthItem = (width: number) => new AllMeasureColumnWidthItemBuilder(width);
+
+export const weakMeasureColumnWidthItemBuilder = (
+    measureIdentifier: AFM.Identifier,
+    width: number,
+    allowGrowToFit: boolean = false,
+) => new WeakMeasureColumnWidthItemBuilder(measureIdentifier, width, allowGrowToFit);
