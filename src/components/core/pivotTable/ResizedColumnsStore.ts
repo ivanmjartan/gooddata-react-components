@@ -103,7 +103,7 @@ export class ResizedColumnsStore {
         this.weakMeasuresColumnWidths = {};
     }
 
-    public addWeekMeasureColumn(column: Column, allColumns: Column[]) {
+    public addWeekMeasureColumn(column: Column) {
         const width = column.getActualWidth();
         const measureHeaderLocalIdentifier: string = getMappingHeaderMeasureItemLocalIdentifier(column);
         if (measureHeaderLocalIdentifier) {
@@ -119,14 +119,12 @@ export class ResizedColumnsStore {
                     },
                 },
             };
-            allColumns.forEach(col => {
-                const weakColumnWidth = this.getMatchedWeakMeasuresColumnWidths(col);
-                if (isMeasureColumn(col) && weakColumnWidth) {
-                    const colId = getColumnIdentifier(col);
-                    if (this.manuallyResizedColumns[colId]) {
-                        this.manuallyResizedColumns = omit(this.manuallyResizedColumns, colId);
-                    }
-                    col.getColDef().suppressSizeToFit = true;
+            const colIds = Object.keys(this.manuallyResizedColumns);
+
+            colIds.forEach(colId => {
+                const item = this.manuallyResizedColumns[colId];
+                if (item.measureIdentifier === measureHeaderLocalIdentifier) {
+                    this.manuallyResizedColumns = omit(this.manuallyResizedColumns, colId);
                 }
             });
         }

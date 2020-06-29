@@ -321,11 +321,12 @@ export const resizeWeakMeasureColumns = (
     column: Column,
 ) => {
     const allColumns = columnApi.getAllColumns();
-    resizedColumnsStore.addWeekMeasureColumn(column, allColumns);
+    resizedColumnsStore.addWeekMeasureColumn(column);
     allColumns.forEach(col => {
         const weakColumnWidth = resizedColumnsStore.getMatchedWeakMeasuresColumnWidths(col);
         if (isMeasureColumn(col) && weakColumnWidth) {
             columnApi.setColumnWidth(col, weakColumnWidth.measureColumnWidthItem.width.value);
+            col.getColDef().suppressSizeToFit = true;
         }
     });
 };

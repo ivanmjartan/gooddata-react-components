@@ -3,8 +3,9 @@ import { ResizedColumnsStore } from "../ResizedColumnsStore";
 import { ColumnWidthItem } from "../../../../interfaces/PivotTable";
 import { Execution } from "@gooddata/typings";
 import { ColDef, Column } from "ag-grid-community";
-import { MEASURE_COLUMN, ROW_ATTRIBUTE_COLUMN } from "../agGridConst";
+import { MEASURE_COLUMN, ROW_ATTRIBUTE_COLUMN, COLUMN_ATTRIBUTE_COLUMN } from "../agGridConst";
 import { MANUALLY_SIZED_MAX_WIDTH, MIN_WIDTH } from "../agGridColumnSizing";
+import { IGridHeader } from "../agGridTypes";
 
 describe("ResizedColumnsStore", () => {
     const measureItem = {
@@ -107,7 +108,23 @@ describe("ResizedColumnsStore", () => {
         executionResponse: executionResponseMock,
         executionResult: null,
     };
-    const getFakeColumn = (columnDefinition: ColDef): Column => {
+
+    const measureIdentifier = "m_0";
+
+    const weakMeasuresColumnWidths = {
+        m_0: {
+            measureColumnWidthItem: {
+                width: 350,
+                locator: {
+                    measureLocatorItem: {
+                        measureIdentifier,
+                    },
+                },
+            },
+        },
+    };
+
+    const getFakeColumn = (columnDefinition: ColDef | IGridHeader): Column => {
         const fakeColumn = {
             getColDef: () => {
                 return columnDefinition;
@@ -146,10 +163,11 @@ describe("ResizedColumnsStore", () => {
             expect(result).toEqual(expectedResult);
         });
 
-        it("should return all measure column width", () => {
+        it("should return all measure column width when manuallyResizedColumns not exists", () => {
             const resizedColumnsStore: any = new ResizedColumnsStore();
             resizedColumnsStore.allMeasureColumnWidth = 42;
             const columnMock = getFakeColumn({
+                colId: "m_0",
                 type: MEASURE_COLUMN,
             });
             const expectedResult = { width: 42 };
@@ -173,11 +191,203 @@ describe("ResizedColumnsStore", () => {
             (resizedColumnsStore as any).allMeasureColumnWidth = 42;
 
             const columnMock = getFakeColumn({
+                colId: "m_0",
                 type: MEASURE_COLUMN,
             });
-            const expectedResult = { width: 42 };
+            const expectedResult = { width: 400 };
             const result = resizedColumnsStore.getManuallyResizedColumn(columnMock);
             expect(result).toEqual(expectedResult);
+        });
+
+        it("should not return manually resized measure column width is auto", () => {
+            const resizedColumnsStore: any = new ResizedColumnsStore();
+            resizedColumnsStore.manuallyResizedColumns = {
+                m_0: { width: "auto" },
+                a_4DOTdf: { width: 200 },
+            };
+            const columnMock = getFakeColumn({
+                colId: "m_0",
+            });
+
+            const result = resizedColumnsStore.getManuallyResizedColumn(columnMock);
+            expect(result).toEqual(undefined);
+        });
+
+        it("should return weak column width when exist in internal weakMeasuresColumnWidths and not in manuallyResizedColumns", () => {
+            const resizedColumnsStore: any = new ResizedColumnsStore();
+            resizedColumnsStore.allMeasureColumnWidth = 42;
+            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
+            resizedColumnsStore.manuallyResizedColumns = {
+                a_4DOTdf: { width: 200 },
+            };
+            const columnMock = getFakeColumn({
+                colId: "m_0",
+                type: "MEASURE_COLUMN",
+                drillItems: [
+                    {
+                        measureHeaderItem: {
+                            identifier: "1",
+                            uri: "/gdc/md/storybook/obj/1",
+                            localIdentifier: measureIdentifier,
+                            format: "#,##0.00",
+                            name: "Amount",
+                        },
+                    },
+                ],
+            });
+
+            const expectedResult = { width: 350 };
+
+            const result = resizedColumnsStore.getManuallyResizedColumn(columnMock);
+            expect(result).toEqual(expectedResult);
+        });
+
+        it("should return manuallyResizedColumns column width when exist in internal weakMeasuresColumnWidths and in manuallyResizedColumns", () => {
+            const resizedColumnsStore: any = new ResizedColumnsStore();
+            resizedColumnsStore.allMeasureColumnWidth = 42;
+            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
+            resizedColumnsStore.manuallyResizedColumns = {
+                m_0: { width: 111 },
+                a_4DOTdf: { width: 200 },
+            };
+            const columnMock = getFakeColumn({
+                colId: "m_0",
+                type: "MEASURE_COLUMN",
+                drillItems: [
+                    {
+                        measureHeaderItem: {
+                            identifier: "1",
+                            uri: "/gdc/md/storybook/obj/1",
+                            localIdentifier: measureIdentifier,
+                            format: "#,##0.00",
+                            name: "Amount",
+                        },
+                    },
+                ],
+            });
+
+            const expectedResult = { width: 111 };
+
+            const result = resizedColumnsStore.getManuallyResizedColumn(columnMock);
+            expect(result).toEqual(expectedResult);
+        });
+
+        it("should return allMeasureColumnWidth column width", () => {
+            const resizedColumnsStore: any = new ResizedColumnsStore();
+            resizedColumnsStore.allMeasureColumnWidth = 42;
+            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
+            resizedColumnsStore.manuallyResizedColumns = {
+                m_0: { width: 111 },
+                a_4DOTdf: { width: 200 },
+            };
+            const columnMock = getFakeColumn({
+                colId: "someColumnId",
+                type: "MEASURE_COLUMN",
+                drillItems: [
+                    {
+                        measureHeaderItem: {
+                            identifier: "1",
+                            uri: "/gdc/md/storybook/obj/1",
+                            localIdentifier: "someMeasureIdentifier",
+                            format: "#,##0.00",
+                            name: "Amount",
+                        },
+                    },
+                ],
+            });
+
+            const expectedResult = { width: 42 };
+
+            const result = resizedColumnsStore.getManuallyResizedColumn(columnMock);
+            expect(result).toEqual(expectedResult);
+        });
+    });
+
+    describe("getMatchedWeakMeasuresColumnWidths", () => {
+        it("should return weakMeasureColumnWidthItem if exist in internal weakMeasuresColumnWidths map", () => {
+            const resizedColumnsStore: any = new ResizedColumnsStore();
+            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
+
+            const columnMock = getFakeColumn({
+                colId: "someId",
+                type: "MEASURE_COLUMN",
+                drillItems: [
+                    {
+                        measureHeaderItem: {
+                            identifier: "1",
+                            uri: "/gdc/md/storybook/obj/1",
+                            localIdentifier: measureIdentifier,
+                            format: "#,##0.00",
+                            name: "Amount",
+                        },
+                    },
+                ],
+            });
+
+            const expectedResult = {
+                measureColumnWidthItem: {
+                    locator: {
+                        measureLocatorItem: {
+                            measureIdentifier,
+                        },
+                    },
+                    width: 350,
+                },
+            };
+
+            const result = resizedColumnsStore.getMatchedWeakMeasuresColumnWidths(columnMock);
+
+            expect(result).toEqual(expectedResult);
+        });
+
+        it("should return undefined if not exist in internal weakMeasuresColumnWidths map", () => {
+            const resizedColumnsStore: any = new ResizedColumnsStore();
+            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
+
+            const columnMock = getFakeColumn({
+                colId: "someId",
+                type: "MEASURE_COLUMN",
+                drillItems: [
+                    {
+                        measureHeaderItem: {
+                            identifier: "1",
+                            uri: "/gdc/md/storybook/obj/1",
+                            localIdentifier: "someNotExistingIdentifier",
+                            format: "#,##0.00",
+                            name: "Amount",
+                        },
+                    },
+                ],
+            });
+
+            const result = resizedColumnsStore.getMatchedWeakMeasuresColumnWidths(columnMock);
+
+            expect(result).toEqual(undefined);
+        });
+
+        it("should return undefined if not match localIdentifier in internal weakMeasuresColumnWidths map", () => {
+            const resizedColumnsStore: any = new ResizedColumnsStore();
+            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
+
+            const columnMock = getFakeColumn({
+                colId: "someId",
+                type: "MEASURE_COLUMN",
+                drillItems: [
+                    {
+                        measureHeaderItem: {
+                            identifier: "1",
+                            uri: "/gdc/md/storybook/obj/1",
+                            localIdentifier: "someNotExistingIdentifier",
+                            format: "#,##0.00",
+                            name: "Amount",
+                        },
+                    },
+                ],
+            });
+
+            const result = resizedColumnsStore.getMatchedWeakMeasuresColumnWidths(columnMock);
+
+            expect(result).toEqual(undefined);
         });
     });
 
@@ -283,6 +493,146 @@ describe("ResizedColumnsStore", () => {
             const result = (resizedColumnsStore as any).manuallyResizedColumns.a_4DOTdf.width.value;
             const correctWidth = 200;
             expect(result).toEqual(correctWidth);
+        });
+
+        it("should clear all weakMeasuresColumnWidths", () => {
+            const resizedColumnsStore: any = new ResizedColumnsStore();
+            resizedColumnsStore.manuallyResizedColumns = {
+                m_0: { width: 400 },
+                a_4DOTdf: { width: 200 },
+            };
+            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
+
+            const columnsMock = [
+                getFakeColumn({
+                    colId: "m_0",
+                    type: MEASURE_COLUMN,
+                }),
+                getFakeColumn({
+                    type: MEASURE_COLUMN,
+                }),
+            ];
+            resizedColumnsStore.addAllMeasureColumn(42, columnsMock);
+
+            expect(resizedColumnsStore.weakMeasuresColumnWidths).toEqual({});
+        });
+    });
+
+    describe("addWeekMeasureColumn", () => {
+        it("should do nothing when column type is not MEASURE_COLUMN", () => {
+            const resizedColumnsStore: any = new ResizedColumnsStore();
+            const columnMock = getFakeColumn({
+                colId: "m_0_id",
+                type: COLUMN_ATTRIBUTE_COLUMN,
+            });
+
+            const columnsMock = [columnMock];
+
+            resizedColumnsStore.addWeekMeasureColumn(columnMock, columnsMock);
+            expect(resizedColumnsStore.weakMeasuresColumnWidths).toEqual({});
+        });
+
+        it("should add weak column", () => {
+            const resizedColumnsStore: any = new ResizedColumnsStore();
+            const columnMock = getFakeColumn({
+                colId: "m_0_id",
+                type: "MEASURE_COLUMN",
+                width: 666,
+                drillItems: [
+                    {
+                        measureHeaderItem: {
+                            identifier: "1",
+                            uri: "/gdc/md/storybook/obj/1",
+                            localIdentifier: measureIdentifier,
+                            format: "#,##0.00",
+                            name: "Amount",
+                        },
+                    },
+                ],
+            });
+
+            const columnsMock = [columnMock];
+
+            const expectedWeakMeasuresColumnWidths = {
+                m_0: {
+                    measureColumnWidthItem: {
+                        locator: {
+                            measureLocatorItem: {
+                                measureIdentifier,
+                            },
+                        },
+                        width: 666,
+                    },
+                },
+            };
+
+            resizedColumnsStore.addWeekMeasureColumn(columnMock, columnsMock);
+            expect(resizedColumnsStore.weakMeasuresColumnWidths).toEqual(expectedWeakMeasuresColumnWidths);
+        });
+
+        it("should add weak column and remove measure columns from manuallyResizedColumns and set suppressSizeToFit when mach measureIdentifier", () => {
+            const resizedColumnsStore: any = new ResizedColumnsStore();
+            resizedColumnsStore.manuallyResizedColumns = {
+                m_0_id_2: { width: 400, measureIdentifier },
+                a_4DOTdf: { width: 200 },
+            };
+
+            const columnMock = getFakeColumn({
+                colId: "m_0_id",
+                type: "MEASURE_COLUMN",
+                width: 666,
+                drillItems: [
+                    {
+                        measureHeaderItem: {
+                            identifier: "1",
+                            uri: "/gdc/md/storybook/obj/1",
+                            localIdentifier: measureIdentifier,
+                            format: "#,##0.00",
+                            name: "Amount",
+                        },
+                    },
+                ],
+            });
+
+            const manuallyResizedColumnDef = {
+                colId: "m_0_id_2",
+                type: "MEASURE_COLUMN",
+                width: 111,
+                drillItems: [
+                    {
+                        measureHeaderItem: {
+                            identifier: "2",
+                            uri: "someUri",
+                            localIdentifier: measureIdentifier,
+                            format: "#,##0.00",
+                            name: "Amount",
+                        },
+                    },
+                ],
+            };
+
+            const columnsMock = [columnMock, getFakeColumn(manuallyResizedColumnDef)];
+
+            const expectedWeakMeasuresColumnWidths = {
+                m_0: {
+                    measureColumnWidthItem: {
+                        locator: {
+                            measureLocatorItem: {
+                                measureIdentifier,
+                            },
+                        },
+                        width: 666,
+                    },
+                },
+            };
+
+            const expectedManuallyResizedColumns = {
+                a_4DOTdf: { width: 200 },
+            };
+
+            resizedColumnsStore.addWeekMeasureColumn(columnMock, columnsMock);
+            expect(resizedColumnsStore.weakMeasuresColumnWidths).toEqual(expectedWeakMeasuresColumnWidths);
+            expect(resizedColumnsStore.manuallyResizedColumns).toEqual(expectedManuallyResizedColumns);
         });
     });
 
