@@ -166,8 +166,8 @@ describe("ResizedColumnsStore", () => {
         });
 
         it("should return all measure column width when manuallyResizedColumns not exists", () => {
-            const resizedColumnsStore: any = new ResizedColumnsStore();
-            resizedColumnsStore.allMeasureColumnWidth = 42;
+            const resizedColumnsStore = new ResizedColumnsStore({}, 42, {});
+
             const columnMock = getFakeColumn({
                 colId: "m_0",
                 type: MEASURE_COLUMN,
@@ -178,19 +178,21 @@ describe("ResizedColumnsStore", () => {
         });
 
         it("should return all measure column width when manuallyResizedColumns exists", () => {
-            const resizedColumnsStore = new ResizedColumnsStore({
-                m_0: {
-                    width: {
-                        value: 400,
+            const resizedColumnsStore = new ResizedColumnsStore(
+                {
+                    m_0: {
+                        width: {
+                            value: 400,
+                        },
+                    },
+                    a_4DOTdf: {
+                        width: {
+                            value: 200,
+                        },
                     },
                 },
-                a_4DOTdf: {
-                    width: {
-                        value: 200,
-                    },
-                },
-            });
-            (resizedColumnsStore as any).allMeasureColumnWidth = 42;
+                42,
+            );
 
             const columnMock = getFakeColumn({
                 colId: "m_0",
@@ -216,12 +218,14 @@ describe("ResizedColumnsStore", () => {
         });
 
         it("should return weak column width when exist in internal weakMeasuresColumnWidths and not in manuallyResizedColumns", () => {
-            const resizedColumnsStore: any = new ResizedColumnsStore();
-            resizedColumnsStore.allMeasureColumnWidth = 42;
-            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
-            resizedColumnsStore.manuallyResizedColumns = {
-                a_4DOTdf: { width: { value: 200 } },
-            };
+            const resizedColumnsStore = new ResizedColumnsStore(
+                {
+                    a_4DOTdf: { width: { value: 200 } },
+                },
+                42,
+                weakMeasuresColumnWidths,
+            );
+
             const columnMock = getFakeColumn({
                 colId: "m_0",
                 type: "MEASURE_COLUMN",
@@ -245,13 +249,15 @@ describe("ResizedColumnsStore", () => {
         });
 
         it("should return manuallyResizedColumns column width when exist in internal weakMeasuresColumnWidths and in manuallyResizedColumns", () => {
-            const resizedColumnsStore: any = new ResizedColumnsStore();
-            resizedColumnsStore.allMeasureColumnWidth = 42;
-            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
-            resizedColumnsStore.manuallyResizedColumns = {
-                m_0: { width: { value: 111 } },
-                a_4DOTdf: { width: { value: 200 } },
-            };
+            const resizedColumnsStore = new ResizedColumnsStore(
+                {
+                    m_0: { width: { value: 111 } },
+                    a_4DOTdf: { width: { value: 200 } },
+                },
+                42,
+                weakMeasuresColumnWidths,
+            );
+
             const columnMock = getFakeColumn({
                 colId: "m_0",
                 type: "MEASURE_COLUMN",
@@ -275,13 +281,15 @@ describe("ResizedColumnsStore", () => {
         });
 
         it("should return allMeasureColumnWidth column width", () => {
-            const resizedColumnsStore: any = new ResizedColumnsStore();
-            resizedColumnsStore.allMeasureColumnWidth = 42;
-            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
-            resizedColumnsStore.manuallyResizedColumns = {
-                m_0: { width: 111 },
-                a_4DOTdf: { width: 200 },
-            };
+            const resizedColumnsStore = new ResizedColumnsStore(
+                {
+                    m_0: { width: { value: 111 } },
+                    a_4DOTdf: { width: { value: 200 } },
+                },
+                42,
+                weakMeasuresColumnWidths,
+            );
+
             const columnMock = getFakeColumn({
                 colId: "someColumnId",
                 type: "MEASURE_COLUMN",
@@ -307,8 +315,7 @@ describe("ResizedColumnsStore", () => {
 
     describe("getMatchedWeakMeasuresColumnWidths", () => {
         it("should return weakMeasureColumnWidthItem if exist in internal weakMeasuresColumnWidths map", () => {
-            const resizedColumnsStore: any = new ResizedColumnsStore();
-            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
+            const resizedColumnsStore = new ResizedColumnsStore({}, null, weakMeasuresColumnWidths);
 
             const columnMock = getFakeColumn({
                 colId: "someId",
@@ -345,8 +352,7 @@ describe("ResizedColumnsStore", () => {
         });
 
         it("should return undefined if not exist in internal weakMeasuresColumnWidths map", () => {
-            const resizedColumnsStore: any = new ResizedColumnsStore();
-            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
+            const resizedColumnsStore = new ResizedColumnsStore({}, null, weakMeasuresColumnWidths);
 
             const columnMock = getFakeColumn({
                 colId: "someId",
@@ -370,8 +376,7 @@ describe("ResizedColumnsStore", () => {
         });
 
         it("should return undefined if not match localIdentifier in internal weakMeasuresColumnWidths map", () => {
-            const resizedColumnsStore: any = new ResizedColumnsStore();
-            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
+            const resizedColumnsStore = new ResizedColumnsStore({}, null, weakMeasuresColumnWidths);
 
             const columnMock = getFakeColumn({
                 colId: "someId",
@@ -423,21 +428,21 @@ describe("ResizedColumnsStore", () => {
 
     describe("addToManuallyResizedColumn", () => {
         it("should add manually resized column to map", () => {
-            const resizedColumnsStore: any = new ResizedColumnsStore();
+            const resizedColumnsStore = new ResizedColumnsStore();
             const correctWidth = 42;
             const columnMock = getFakeColumn({
                 colId: "m_1",
                 width: correctWidth,
             });
             resizedColumnsStore.addToManuallyResizedColumn(columnMock);
-            const result = resizedColumnsStore.manuallyResizedColumns.m_1.width.value;
+            const result = (resizedColumnsStore as any).manuallyResizedColumns.m_1.width.value;
             expect(result).toBe(correctWidth);
         });
     });
 
     describe("addAllMeasureColumn", () => {
         it("should add all measure columns", () => {
-            const resizedColumnsStore: any = new ResizedColumnsStore();
+            const resizedColumnsStore = new ResizedColumnsStore();
             const columnsMock = [
                 getFakeColumn({
                     type: MEASURE_COLUMN,
@@ -445,7 +450,7 @@ describe("ResizedColumnsStore", () => {
             ];
             resizedColumnsStore.addAllMeasureColumn(42, columnsMock);
             const expectedResult = 42;
-            const result = resizedColumnsStore.allMeasureColumnWidth;
+            const result = (resizedColumnsStore as any).allMeasureColumnWidth;
             expect(result).toEqual(expectedResult);
         });
 
@@ -500,12 +505,14 @@ describe("ResizedColumnsStore", () => {
         });
 
         it("should clear all weakMeasuresColumnWidths", () => {
-            const resizedColumnsStore: any = new ResizedColumnsStore();
-            resizedColumnsStore.manuallyResizedColumns = {
-                m_0: { width: 400 },
-                a_4DOTdf: { width: 200 },
-            };
-            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
+            const resizedColumnsStore = new ResizedColumnsStore(
+                {
+                    m_0: { width: { value: 400 } },
+                    a_4DOTdf: { width: { value: 200 } },
+                },
+                null,
+                weakMeasuresColumnWidths,
+            );
 
             const columnsMock = [
                 getFakeColumn({
@@ -518,26 +525,25 @@ describe("ResizedColumnsStore", () => {
             ];
             resizedColumnsStore.addAllMeasureColumn(42, columnsMock);
 
-            expect(resizedColumnsStore.weakMeasuresColumnWidths).toEqual({});
+            expect((resizedColumnsStore as any).weakMeasuresColumnWidths).toEqual({});
         });
     });
 
     describe("addWeekMeasureColumn", () => {
         it("should do nothing when column type is not MEASURE_COLUMN", () => {
-            const resizedColumnsStore: any = new ResizedColumnsStore();
+            const resizedColumnsStore = new ResizedColumnsStore();
+
             const columnMock = getFakeColumn({
                 colId: "m_0_id",
                 type: COLUMN_ATTRIBUTE_COLUMN,
             });
 
-            const columnsMock = [columnMock];
-
-            resizedColumnsStore.addWeekMeasureColumn(columnMock, columnsMock);
-            expect(resizedColumnsStore.weakMeasuresColumnWidths).toEqual({});
+            resizedColumnsStore.addWeekMeasureColumn(columnMock);
+            expect((resizedColumnsStore as any).weakMeasuresColumnWidths).toEqual({});
         });
 
         it("should add weak column", () => {
-            const resizedColumnsStore: any = new ResizedColumnsStore();
+            const resizedColumnsStore = new ResizedColumnsStore();
             const columnMock = getFakeColumn({
                 colId: "m_0_id",
                 type: "MEASURE_COLUMN",
@@ -554,8 +560,6 @@ describe("ResizedColumnsStore", () => {
                     },
                 ],
             });
-
-            const columnsMock = [columnMock];
 
             const expectedWeakMeasuresColumnWidths = {
                 m_0: {
@@ -572,16 +576,17 @@ describe("ResizedColumnsStore", () => {
                 },
             };
 
-            resizedColumnsStore.addWeekMeasureColumn(columnMock, columnsMock);
-            expect(resizedColumnsStore.weakMeasuresColumnWidths).toEqual(expectedWeakMeasuresColumnWidths);
+            resizedColumnsStore.addWeekMeasureColumn(columnMock);
+            expect((resizedColumnsStore as any).weakMeasuresColumnWidths).toEqual(
+                expectedWeakMeasuresColumnWidths,
+            );
         });
 
         it("should add weak column and remove measure columns from manuallyResizedColumns and set suppressSizeToFit when mach measureIdentifier", () => {
-            const resizedColumnsStore: any = new ResizedColumnsStore();
-            resizedColumnsStore.manuallyResizedColumns = {
-                m_0_id_2: { width: 400, measureIdentifier },
-                a_4DOTdf: { width: 200 },
-            };
+            const resizedColumnsStore = new ResizedColumnsStore({
+                m_0_id_2: { width: { value: 400 }, measureIdentifier },
+                a_4DOTdf: { width: { value: 200 } },
+            });
 
             const columnMock = getFakeColumn({
                 colId: "m_0_id",
@@ -599,25 +604,6 @@ describe("ResizedColumnsStore", () => {
                     },
                 ],
             });
-
-            const manuallyResizedColumnDef = {
-                colId: "m_0_id_2",
-                type: "MEASURE_COLUMN",
-                width: 111,
-                drillItems: [
-                    {
-                        measureHeaderItem: {
-                            identifier: "2",
-                            uri: "someUri",
-                            localIdentifier: measureIdentifier,
-                            format: "#,##0.00",
-                            name: "Amount",
-                        },
-                    },
-                ],
-            };
-
-            const columnsMock = [columnMock, getFakeColumn(manuallyResizedColumnDef)];
 
             const expectedWeakMeasuresColumnWidths = {
                 m_0: {
@@ -635,26 +621,33 @@ describe("ResizedColumnsStore", () => {
             };
 
             const expectedManuallyResizedColumns = {
-                a_4DOTdf: { width: 200 },
+                a_4DOTdf: { width: { value: 200 } },
             };
 
-            resizedColumnsStore.addWeekMeasureColumn(columnMock, columnsMock);
-            expect(resizedColumnsStore.weakMeasuresColumnWidths).toEqual(expectedWeakMeasuresColumnWidths);
-            expect(resizedColumnsStore.manuallyResizedColumns).toEqual(expectedManuallyResizedColumns);
+            resizedColumnsStore.addWeekMeasureColumn(columnMock);
+            expect((resizedColumnsStore as any).weakMeasuresColumnWidths).toEqual(
+                expectedWeakMeasuresColumnWidths,
+            );
+            expect((resizedColumnsStore as any).manuallyResizedColumns).toEqual(
+                expectedManuallyResizedColumns,
+            );
         });
     });
 
     describe("removeWeakMeasureColumn", () => {
         it("should remove weak column ", () => {
-            const resizedColumnsStore: any = new ResizedColumnsStore({
-                m_0: {
-                    width: {
-                        value: "auto",
+            const resizedColumnsStore = new ResizedColumnsStore(
+                {
+                    m_0: {
+                        width: {
+                            value: "auto",
+                        },
+                        measureIdentifier,
                     },
-                    measureIdentifier,
                 },
-            });
-            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
+                null,
+                weakMeasuresColumnWidths,
+            );
 
             const weakResizedColumnDef = {
                 colId: "m_0",
@@ -675,13 +668,12 @@ describe("ResizedColumnsStore", () => {
 
             const columnMock = getFakeColumn(weakResizedColumnDef);
             resizedColumnsStore.removeWeakMeasureColumn(columnMock);
-            expect(resizedColumnsStore.manuallyResizedColumns).toEqual({});
-            expect(resizedColumnsStore.weakMeasuresColumnWidths).toEqual({});
+            expect((resizedColumnsStore as any).manuallyResizedColumns).toEqual({});
+            expect((resizedColumnsStore as any).weakMeasuresColumnWidths).toEqual({});
         });
 
         it("should remove weak column from manually resized when width is auto", () => {
-            const resizedColumnsStore: any = new ResizedColumnsStore();
-            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
+            const resizedColumnsStore = new ResizedColumnsStore({}, null, weakMeasuresColumnWidths);
 
             const weakResizedColumnDef = {
                 colId: "m_0",
@@ -702,7 +694,7 @@ describe("ResizedColumnsStore", () => {
 
             const columnMock = getFakeColumn(weakResizedColumnDef);
             resizedColumnsStore.removeWeakMeasureColumn(columnMock);
-            expect(resizedColumnsStore.weakMeasuresColumnWidths).toEqual({});
+            expect((resizedColumnsStore as any).weakMeasuresColumnWidths).toEqual({});
         });
     });
 

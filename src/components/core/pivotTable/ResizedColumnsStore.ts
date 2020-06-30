@@ -49,10 +49,14 @@ export class ResizedColumnsStore {
     private allMeasureColumnWidth: number | null;
     private weakMeasuresColumnWidths: IWeakMeasureColumnWidthItemsMap;
 
-    public constructor(manuallyResizedColumns: IResizedColumnsCollection = {}) {
+    public constructor(
+        manuallyResizedColumns: IResizedColumnsCollection = {},
+        allMeasureColumnWidth: number | null = null,
+        weakMeasuresColumnWidths: IWeakMeasureColumnWidthItemsMap = {},
+    ) {
         this.manuallyResizedColumns = manuallyResizedColumns;
-        this.allMeasureColumnWidth = null;
-        this.weakMeasuresColumnWidths = {};
+        this.allMeasureColumnWidth = allMeasureColumnWidth;
+        this.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
     }
 
     public getManuallyResizedColumn(item: Column | ColDef): IManuallyResizedColumnsItem {
