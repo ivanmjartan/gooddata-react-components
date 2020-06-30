@@ -51,7 +51,7 @@ const isMeasureColumnWidthItem = columnWidthItem => {
     );
 };
 
-const isLocatorsEqual = (locator1, locator2) => {
+const areLocatorsEqual = (locator1, locator2) => {
     return (
         locator1[0].attributeLocatorItem.element === locator2[0].attributeLocatorItem.element &&
         locator1[1].measureLocatorItem.measureIdentifier === locator2[1].measureLocatorItem.measureIdentifier
@@ -67,7 +67,10 @@ const isSameWidthItem = (item, newItem) => {
     }
 
     if (isMeasureColumnWidthItem(item) && isMeasureColumnWidthItem(newItem)) {
-        return isLocatorsEqual(item.measureColumnWidthItem.locators, newItem.measureColumnWidthItem.locators);
+        return areLocatorsEqual(
+            item.measureColumnWidthItem.locators,
+            newItem.measureColumnWidthItem.locators,
+        );
     }
 
     if (isAllMeasureColumnWidthItem(item) && isAllMeasureColumnWidthItem(newItem)) {

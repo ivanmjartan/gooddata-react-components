@@ -353,7 +353,7 @@ describe("agGridColumnSizing", () => {
             headerName: "Amount",
             field: amountId,
             colId: amountId,
-            type: "MEASURE_COLUMN",
+            type: MEASURE_COLUMN,
             measureIndex: 0,
             index: 1,
         };
@@ -374,7 +374,7 @@ describe("agGridColumnSizing", () => {
             headerName: "Bigger Amount",
             field: biggerAmountId,
             colId: biggerAmountId,
-            type: "MEASURE_COLUMN",
+            type: MEASURE_COLUMN,
             measureIndex: 1,
             index: 2,
         };

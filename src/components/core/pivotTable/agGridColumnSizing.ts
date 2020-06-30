@@ -327,7 +327,7 @@ export const resizeWeakMeasureColumns = (
     const allColumns = columnApi.getAllColumns();
     resizedColumnsStore.addWeekMeasureColumn(column);
     allColumns.forEach(col => {
-        const weakColumnWidth = resizedColumnsStore.getMatchedWeakMeasuresColumnWidths(col);
+        const weakColumnWidth = resizedColumnsStore.getMatchedWeakMeasuresColumnWidth(col);
         if (isMeasureColumn(col) && weakColumnWidth) {
             columnApi.setColumnWidth(col, weakColumnWidth.measureColumnWidthItem.width.value);
             col.getColDef().suppressSizeToFit = true;

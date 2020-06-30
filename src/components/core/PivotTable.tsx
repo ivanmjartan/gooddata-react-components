@@ -1042,10 +1042,9 @@ export class PivotTableInner extends BaseVisualization<IPivotTableInnerProps, IP
         if (this.resizedColumnsStore.isColumnManuallyResized(column)) {
             this.resizedColumnsStore.removeFromManuallyResizedColumn(column);
         }
-
+        column.getColDef().suppressSizeToFit = false;
         if (this.isColumnAutoResized(id)) {
             this.columnApi.setColumnWidth(column, this.autoResizedColumns[id].width);
-            column.getColDef().suppressSizeToFit = false;
             return;
         }
 
@@ -1053,9 +1052,7 @@ export class PivotTableInner extends BaseVisualization<IPivotTableInnerProps, IP
         if (isColumnDisplayed(this.columnApi.getAllDisplayedVirtualColumns(), column)) {
             // skip columns out of viewport because these can not be autoresized
             this.resizedColumnsStore.addToManuallyResizedColumn(column, true);
-            column.getColDef().suppressSizeToFit = false;
         }
-        column.getColDef().suppressSizeToFit = false;
     }
 
     private onGridColumnResized = async (columnEvent: ColumnResizedEvent) => {

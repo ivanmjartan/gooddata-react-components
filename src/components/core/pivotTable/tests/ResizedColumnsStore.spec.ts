@@ -228,7 +228,7 @@ describe("ResizedColumnsStore", () => {
 
             const columnMock = getFakeColumn({
                 colId: "m_0",
-                type: "MEASURE_COLUMN",
+                type: MEASURE_COLUMN,
                 drillItems: [
                     {
                         measureHeaderItem: {
@@ -260,7 +260,7 @@ describe("ResizedColumnsStore", () => {
 
             const columnMock = getFakeColumn({
                 colId: "m_0",
-                type: "MEASURE_COLUMN",
+                type: MEASURE_COLUMN,
                 drillItems: [
                     {
                         measureHeaderItem: {
@@ -292,7 +292,7 @@ describe("ResizedColumnsStore", () => {
 
             const columnMock = getFakeColumn({
                 colId: "someColumnId",
-                type: "MEASURE_COLUMN",
+                type: MEASURE_COLUMN,
                 drillItems: [
                     {
                         measureHeaderItem: {
@@ -313,13 +313,13 @@ describe("ResizedColumnsStore", () => {
         });
     });
 
-    describe("getMatchedWeakMeasuresColumnWidths", () => {
+    describe("getMatchedWeakMeasuresColumnWidth", () => {
         it("should return weakMeasureColumnWidthItem if exist in internal weakMeasuresColumnWidths map", () => {
             const resizedColumnsStore = new ResizedColumnsStore({}, null, weakMeasuresColumnWidths);
 
             const columnMock = getFakeColumn({
                 colId: "someId",
-                type: "MEASURE_COLUMN",
+                type: MEASURE_COLUMN,
                 drillItems: [
                     {
                         measureHeaderItem: {
@@ -346,7 +346,7 @@ describe("ResizedColumnsStore", () => {
                 },
             };
 
-            const result = resizedColumnsStore.getMatchedWeakMeasuresColumnWidths(columnMock);
+            const result = resizedColumnsStore.getMatchedWeakMeasuresColumnWidth(columnMock);
 
             expect(result).toEqual(expectedResult);
         });
@@ -356,7 +356,7 @@ describe("ResizedColumnsStore", () => {
 
             const columnMock = getFakeColumn({
                 colId: "someId",
-                type: "MEASURE_COLUMN",
+                type: MEASURE_COLUMN,
                 drillItems: [
                     {
                         measureHeaderItem: {
@@ -370,7 +370,7 @@ describe("ResizedColumnsStore", () => {
                 ],
             });
 
-            const result = resizedColumnsStore.getMatchedWeakMeasuresColumnWidths(columnMock);
+            const result = resizedColumnsStore.getMatchedWeakMeasuresColumnWidth(columnMock);
 
             expect(result).toEqual(undefined);
         });
@@ -380,7 +380,7 @@ describe("ResizedColumnsStore", () => {
 
             const columnMock = getFakeColumn({
                 colId: "someId",
-                type: "MEASURE_COLUMN",
+                type: MEASURE_COLUMN,
                 drillItems: [
                     {
                         measureHeaderItem: {
@@ -394,7 +394,7 @@ describe("ResizedColumnsStore", () => {
                 ],
             });
 
-            const result = resizedColumnsStore.getMatchedWeakMeasuresColumnWidths(columnMock);
+            const result = resizedColumnsStore.getMatchedWeakMeasuresColumnWidth(columnMock);
 
             expect(result).toEqual(undefined);
         });
@@ -546,7 +546,7 @@ describe("ResizedColumnsStore", () => {
             const resizedColumnsStore = new ResizedColumnsStore();
             const columnMock = getFakeColumn({
                 colId: "m_0_id",
-                type: "MEASURE_COLUMN",
+                type: MEASURE_COLUMN,
                 width: 666,
                 drillItems: [
                     {
@@ -590,7 +590,7 @@ describe("ResizedColumnsStore", () => {
 
             const columnMock = getFakeColumn({
                 colId: "m_0_id",
-                type: "MEASURE_COLUMN",
+                type: MEASURE_COLUMN,
                 width: 666,
                 drillItems: [
                     {
@@ -651,7 +651,7 @@ describe("ResizedColumnsStore", () => {
 
             const weakResizedColumnDef = {
                 colId: "m_0",
-                type: "MEASURE_COLUMN",
+                type: MEASURE_COLUMN,
                 width: 111,
                 drillItems: [
                     {
@@ -677,7 +677,7 @@ describe("ResizedColumnsStore", () => {
 
             const weakResizedColumnDef = {
                 colId: "m_0",
-                type: "MEASURE_COLUMN",
+                type: MEASURE_COLUMN,
                 width: 111,
                 drillItems: [
                     {

@@ -27,6 +27,7 @@ import {
     isMeasureColumnWidthItem,
     isWeakMeasureColumnWidthItem,
 } from "../../../interfaces/PivotTable";
+import omitBy = require("lodash/omitBy");
 
 export interface IResizedColumnsCollection {
     [columnIdentifier: string]: IResizedColumnsCollectionItem;
@@ -66,7 +67,7 @@ export class ResizedColumnsStore {
             return this.convertItem(this.manuallyResizedColumns[colId]);
         }
 
-        const weakColumnWidth = this.getMatchedWeakMeasuresColumnWidths(item);
+        const weakColumnWidth = this.getMatchedWeakMeasuresColumnWidth(item);
 
         if (weakColumnWidth) {
             return this.getWeakMeasureColumMapItem(weakColumnWidth);
@@ -122,47 +123,38 @@ export class ResizedColumnsStore {
                     },
                 },
             };
-            const colIds = Object.keys(this.manuallyResizedColumns);
 
-            colIds.forEach(colId => {
-                const item = this.manuallyResizedColumns[colId];
-                if (item.measureIdentifier === measureHeaderLocalIdentifier) {
-                    this.manuallyResizedColumns = omit(this.manuallyResizedColumns, colId);
-                }
-            });
+            const shouldBeRemoved = (resizedColumnItem: IResizedColumnsCollectionItem) =>
+                resizedColumnItem.measureIdentifier === measureHeaderLocalIdentifier;
+
+            this.manuallyResizedColumns = omitBy(this.manuallyResizedColumns, shouldBeRemoved);
         }
     }
 
     public removeAllMeasureColumns() {
         this.allMeasureColumnWidth = null;
-        const colIds = Object.keys(this.manuallyResizedColumns);
-        colIds.forEach(colId => {
-            const item = this.manuallyResizedColumns[colId];
-            if (isColumnWidthAuto(item.width)) {
-                this.manuallyResizedColumns = omit(this.manuallyResizedColumns, colId);
-            }
-        });
+        const shouldBeRemoved = (resizedColumnItem: IResizedColumnsCollectionItem) =>
+            isColumnWidthAuto(resizedColumnItem.width);
+        this.manuallyResizedColumns = omitBy(this.manuallyResizedColumns, shouldBeRemoved);
+
         this.weakMeasuresColumnWidths = {};
     }
 
     public removeWeakMeasureColumn(column: Column) {
-        const weakColumnWidth = this.getMatchedWeakMeasuresColumnWidths(column);
+        const weakColumnWidth = this.getMatchedWeakMeasuresColumnWidth(column);
         if (weakColumnWidth) {
             this.weakMeasuresColumnWidths = omit(
                 this.weakMeasuresColumnWidths,
                 weakColumnWidth.measureColumnWidthItem.locator.measureLocatorItem.measureIdentifier,
             );
-            const colIds = Object.keys(this.manuallyResizedColumns);
-            colIds.forEach(colId => {
-                const item = this.manuallyResizedColumns[colId];
-                if (
-                    isColumnWidthAuto(item.width) &&
-                    this.isMatchingWeakWidth(item, weakColumnWidth) &&
+            const shouldBeRemoved = (resizedColumnItem: IResizedColumnsCollectionItem) => {
+                return (
+                    isColumnWidthAuto(resizedColumnItem.width) &&
+                    this.isMatchingWeakWidth(resizedColumnItem, weakColumnWidth) &&
                     !this.isAllMeasureColumWidthUsed()
-                ) {
-                    this.manuallyResizedColumns = omit(this.manuallyResizedColumns, colId);
-                }
-            });
+                );
+            };
+            this.manuallyResizedColumns = omitBy(this.manuallyResizedColumns, shouldBeRemoved);
         }
     }
 
@@ -180,7 +172,7 @@ export class ResizedColumnsStore {
 
         if (
             isMeasureColumn(column) &&
-            (this.isAllMeasureColumWidthUsed() || this.getMatchedWeakMeasuresColumnWidths(column))
+            (this.isAllMeasureColumWidthUsed() || this.getMatchedWeakMeasuresColumnWidth(column))
         ) {
             // TODO INE: consider creating weakItem with width: "auto" when alt+DC over allMeasure
             this.manuallyResizedColumns[colId] = this.getAutoSizeItem(column);
@@ -232,7 +224,7 @@ export class ResizedColumnsStore {
         return [];
     }
 
-    public getMatchedWeakMeasuresColumnWidths(item: Column | ColDef): IWeakMeasureColumnWidthItem {
+    public getMatchedWeakMeasuresColumnWidth(item: Column | ColDef): IWeakMeasureColumnWidthItem {
         const measureHeaderLocalIdentifier: string = getMappingHeaderMeasureItemLocalIdentifier(item);
 
         if (measureHeaderLocalIdentifier) {
@@ -257,22 +249,16 @@ export class ResizedColumnsStore {
 
     private filterWeakColumnWidthItems(columnWidths: ColumnWidthItem[]): IWeakMeasureColumnWidthItemsMap {
         if (columnWidths) {
-            const onlyWeakWidthItems: IWeakMeasureColumnWidthItem[] = columnWidths.reduce(
-                (result: IWeakMeasureColumnWidthItem[], item: ColumnWidthItem) => {
-                    if (isWeakMeasureColumnWidthItem(item)) {
-                        result.push(item);
-                    }
-                    return result;
-                },
-                [],
+            const onlyWeakWidthItems: IWeakMeasureColumnWidthItem[] = columnWidths.filter(
+                isWeakMeasureColumnWidthItem,
             );
+
             return onlyWeakWidthItems.reduce(
-                (map: IWeakMeasureColumnWidthItemsMap, weakWidthItem: IWeakMeasureColumnWidthItem) => {
-                    map[
-                        weakWidthItem.measureColumnWidthItem.locator.measureLocatorItem.measureIdentifier
-                    ] = weakWidthItem;
-                    return map;
-                },
+                (map: IWeakMeasureColumnWidthItemsMap, weakWidthItem: IWeakMeasureColumnWidthItem) => ({
+                    ...map,
+                    [weakWidthItem.measureColumnWidthItem.locator.measureLocatorItem
+                        .measureIdentifier]: weakWidthItem,
+                }),
                 {},
             );
         }
