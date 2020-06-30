@@ -15,7 +15,11 @@ import { IGridHeader } from "../agGridTypes";
 import { DEFAULT_COLUMN_WIDTH } from "../../PivotTable";
 
 import { oneColumnAttributeNoMeasureResponse } from "../../../../execution/fixtures/ExecuteAfm.fixtures";
-import { ResizedColumnsStore, IWeakMeasureColumnWidthItemsMap } from "../ResizedColumnsStore";
+import {
+    ResizedColumnsStore,
+    IWeakMeasureColumnWidthItemsMap,
+    IResizedColumnsCollection,
+} from "../ResizedColumnsStore";
 import { MEASURE_COLUMN, COLUMN_ATTRIBUTE_COLUMN, ROW_ATTRIBUTE_COLUMN } from "../agGridConst";
 import { getFakeColumn, getFakeColumnApi } from "./agGridMock";
 
@@ -140,14 +144,74 @@ describe("agGridColumnSizing", () => {
     };
 
     describe("convertColumnWidthsToMap", () => {
-        it("should return correct IResizedColumns map", async () => {
+        it("should return correct IResizedColumnsCollection map", async () => {
             const result = convertColumnWidthsToMap(columnWidths, executionResponse);
             expect(result).toEqual(expectedColumnMap);
         });
 
-        it("should return correct IResizedColumns map and validate range of widths", async () => {
+        it("should return correct IResizedColumnsCollection map and validate range of widths", async () => {
             const result = convertColumnWidthsToMap(columnWidths, executionResponse, widthValidator);
             expect(result).toEqual(expectedColumnMapValidated);
+        });
+
+        it("should return correct IResizedColumnsCollection map for measureColumnWidthItem with missing IMeasureLocatorItem", async () => {
+            const executionResponseNoMeasures: Execution.IExecutionResponse = {
+                dimensions: [
+                    {
+                        headers: [],
+                    },
+                    {
+                        headers: [
+                            {
+                                attributeHeader: {
+                                    name: "Forecast Category",
+                                    localIdentifier: "a1",
+                                    uri: "/gdc/md/lmnivlu3sowt63jvr2mo1wlse5fyv203/obj/64727",
+                                    identifier: "label.opportunitysnapshot.forecastcategory",
+                                    formOf: {
+                                        name: "Forecast Category",
+                                        uri: "/gdc/md/lmnivlu3sowt63jvr2mo1wlse5fyv203/obj/64726",
+                                        identifier: "attr.opportunitysnapshot.forecastcategory",
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                ],
+                links: {
+                    executionResult: "resultUrl",
+                },
+            };
+
+            const noMeasureColumnWidths: ColumnWidthItem[] = [
+                {
+                    measureColumnWidthItem: {
+                        width: {
+                            value: 155,
+                        },
+                        locators: [
+                            {
+                                attributeLocatorItem: {
+                                    attributeIdentifier: "a1",
+                                    element:
+                                        "/gdc/md/lmnivlu3sowt63jvr2mo1wlse5fyv203/obj/64726/elements?id=966650",
+                                },
+                            },
+                        ],
+                    },
+                },
+            ];
+
+            const expectedResult: IResizedColumnsCollection = {
+                a_64726_966650: { width: { value: 155 } },
+            };
+
+            const result = convertColumnWidthsToMap(
+                noMeasureColumnWidths,
+                executionResponseNoMeasures,
+                widthValidator,
+            );
+            expect(result).toEqual(expectedResult);
         });
     });
 

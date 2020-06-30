@@ -1,6 +1,6 @@
 // (C) 2007-2020 GoodData Corporation
 import cloneDeep = require("lodash/cloneDeep");
-import { Execution } from "@gooddata/typings";
+import { Execution, AFM } from "@gooddata/typings";
 import {
     getAttributeLocators,
     getIdsFromUri,
@@ -65,10 +65,14 @@ export const convertColumnWidthsToMap = (
         }
         if (isMeasureColumnWidthItem(columnWidth)) {
             const [field, width] = getMeasureColumnWidthItemFieldAndWidth(columnWidth, measureHeaderItems);
+
+            const locator: AFM.IMeasureLocatorItem = columnWidth.measureColumnWidthItem.locators.filter(
+                isMeasureLocatorItem,
+            )[0];
+            const measureIdentifier = locator ? locator.measureLocatorItem.measureIdentifier : undefined;
             columnWidthsMap[field] = {
                 width: widthValidator(width),
-                measureIdentifier: columnWidth.measureColumnWidthItem.locators.filter(isMeasureLocatorItem)[0]
-                    .measureLocatorItem.measureIdentifier,
+                measureIdentifier,
             };
         }
     });
