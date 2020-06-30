@@ -141,7 +141,6 @@ function adaptWidthItemsToPivotTable(
                 return [...columnWidths, filteredMeasureColumnWidthItem];
             }
 
-            // TODO INE: test this
             if (firstColumnAttributeAdded) {
                 const transformedWeakMeasureWidthItem = transformToWeakMeasureColumnWidthItem(columnWidth);
                 if (transformedWeakMeasureWidthItem) {

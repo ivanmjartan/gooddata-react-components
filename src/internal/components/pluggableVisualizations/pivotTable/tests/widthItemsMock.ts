@@ -32,6 +32,17 @@ export const validAllMeasureColumnWidthItem: IAllMeasureColumnWidthItem = {
     },
 };
 
+export const validWeakMeasureColumnWidthItem: IWeakMeasureColumnWidthItem = {
+    measureColumnWidthItem: {
+        width: { value: 100 },
+        locator: {
+            measureLocatorItem: {
+                measureIdentifier: "m1",
+            },
+        },
+    },
+};
+
 export const validAttributeColumnWidthItem: IAttributeColumnWidthItem = {
     attributeColumnWidthItem: {
         width: { value: 100 },
