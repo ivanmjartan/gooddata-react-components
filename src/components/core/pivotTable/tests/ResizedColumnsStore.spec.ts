@@ -202,11 +202,11 @@ describe("ResizedColumnsStore", () => {
         });
 
         it("should not return manually resized measure column width is auto", () => {
-            const resizedColumnsStore: any = new ResizedColumnsStore();
-            resizedColumnsStore.manuallyResizedColumns = {
-                m_0: { width: "auto" },
-                a_4DOTdf: { width: 200 },
-            };
+            const resizedColumnsStore = new ResizedColumnsStore({
+                m_0: { width: { value: "auto" } },
+                a_4DOTdf: { width: { value: 200 } },
+            });
+
             const columnMock = getFakeColumn({
                 colId: "m_0",
             });
@@ -220,7 +220,7 @@ describe("ResizedColumnsStore", () => {
             resizedColumnsStore.allMeasureColumnWidth = 42;
             resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
             resizedColumnsStore.manuallyResizedColumns = {
-                a_4DOTdf: { width: 200 },
+                a_4DOTdf: { width: { value: 200 } },
             };
             const columnMock = getFakeColumn({
                 colId: "m_0",
@@ -244,13 +244,13 @@ describe("ResizedColumnsStore", () => {
             expect(result).toEqual(expectedResult);
         });
 
-        /*it("should return manuallyResizedColumns column width when exist in internal weakMeasuresColumnWidths and in manuallyResizedColumns", () => {
+        it("should return manuallyResizedColumns column width when exist in internal weakMeasuresColumnWidths and in manuallyResizedColumns", () => {
             const resizedColumnsStore: any = new ResizedColumnsStore();
             resizedColumnsStore.allMeasureColumnWidth = 42;
             resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
             resizedColumnsStore.manuallyResizedColumns = {
-                m_0: { width: 111 },
-                a_4DOTdf: { width: 200 },
+                m_0: { width: { value: 111 } },
+                a_4DOTdf: { width: { value: 200 } },
             };
             const columnMock = getFakeColumn({
                 colId: "m_0",
@@ -272,7 +272,7 @@ describe("ResizedColumnsStore", () => {
 
             const result = resizedColumnsStore.getManuallyResizedColumn(columnMock);
             expect(result).toEqual(expectedResult);
-        });*/
+        });
 
         it("should return allMeasureColumnWidth column width", () => {
             const resizedColumnsStore: any = new ResizedColumnsStore();
@@ -641,6 +641,68 @@ describe("ResizedColumnsStore", () => {
             resizedColumnsStore.addWeekMeasureColumn(columnMock, columnsMock);
             expect(resizedColumnsStore.weakMeasuresColumnWidths).toEqual(expectedWeakMeasuresColumnWidths);
             expect(resizedColumnsStore.manuallyResizedColumns).toEqual(expectedManuallyResizedColumns);
+        });
+    });
+
+    describe("removeWeakMeasureColumn", () => {
+        it("should remove weak column ", () => {
+            const resizedColumnsStore: any = new ResizedColumnsStore({
+                m_0: {
+                    width: {
+                        value: "auto",
+                    },
+                    measureIdentifier,
+                },
+            });
+            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
+
+            const weakResizedColumnDef = {
+                colId: "m_0",
+                type: "MEASURE_COLUMN",
+                width: 111,
+                drillItems: [
+                    {
+                        measureHeaderItem: {
+                            identifier: "2",
+                            uri: "someUri",
+                            localIdentifier: measureIdentifier,
+                            format: "#,##0.00",
+                            name: "Amount",
+                        },
+                    },
+                ],
+            };
+
+            const columnMock = getFakeColumn(weakResizedColumnDef);
+            resizedColumnsStore.removeWeakMeasureColumn(columnMock);
+            expect(resizedColumnsStore.manuallyResizedColumns).toEqual({});
+            expect(resizedColumnsStore.weakMeasuresColumnWidths).toEqual({});
+        });
+
+        it("should remove weak column from manually resized when width is auto", () => {
+            const resizedColumnsStore: any = new ResizedColumnsStore();
+            resizedColumnsStore.weakMeasuresColumnWidths = weakMeasuresColumnWidths;
+
+            const weakResizedColumnDef = {
+                colId: "m_0",
+                type: "MEASURE_COLUMN",
+                width: 111,
+                drillItems: [
+                    {
+                        measureHeaderItem: {
+                            identifier: "2",
+                            uri: "someUri",
+                            localIdentifier: measureIdentifier,
+                            format: "#,##0.00",
+                            name: "Amount",
+                        },
+                    },
+                ],
+            };
+
+            const columnMock = getFakeColumn(weakResizedColumnDef);
+            resizedColumnsStore.removeWeakMeasureColumn(columnMock);
+            expect(resizedColumnsStore.weakMeasuresColumnWidths).toEqual({});
         });
     });
 
