@@ -70,6 +70,18 @@ export class MeasureColumnWidthItemBuilder implements IMeasureColumnWidthItem {
     };
 }
 
+export class AllMeasureColumnWidthItemBuilder implements IAllMeasureColumnWidthItem {
+    public measureColumnWidthItem: IAllMeasureColumnWidthItem["measureColumnWidthItem"];
+
+    constructor(width: number) {
+        this.measureColumnWidthItem = {
+            width: {
+                value: width,
+            },
+        };
+    }
+}
+
 export class WeakMeasureColumnWidthItemBuilder implements IWeakMeasureColumnWidthItem {
     public measureColumnWidthItem: IWeakMeasureColumnWidthItem["measureColumnWidthItem"];
 
@@ -83,18 +95,6 @@ export class WeakMeasureColumnWidthItemBuilder implements IWeakMeasureColumnWidt
                 measureLocatorItem: {
                     measureIdentifier,
                 },
-            },
-        };
-    }
-}
-
-export class AllMeasureColumnWidthItemBuilder implements IAllMeasureColumnWidthItem {
-    public measureColumnWidthItem: IAllMeasureColumnWidthItem["measureColumnWidthItem"];
-
-    constructor(width: number) {
-        this.measureColumnWidthItem = {
-            width: {
-                value: width,
             },
         };
     }
