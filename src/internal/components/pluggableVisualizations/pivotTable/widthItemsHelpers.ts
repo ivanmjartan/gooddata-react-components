@@ -130,6 +130,13 @@ function adaptWidthItemsToPivotTable(
                 },
             };
 
+            if (firstColumnAttributeAdded) {
+                const transformedWeakMeasureWidthItem = transformToWeakMeasureColumnWidthItem(columnWidth);
+                if (transformedWeakMeasureWidthItem) {
+                    return [...columnWidths, transformedWeakMeasureWidthItem];
+                }
+            }
+
             if (
                 matchesWidthItemFilters(filteredMeasureColumnWidthItem, filters) &&
                 widthItemLocatorsHaveProperLength(
@@ -139,13 +146,6 @@ function adaptWidthItemsToPivotTable(
                 )
             ) {
                 return [...columnWidths, filteredMeasureColumnWidthItem];
-            }
-
-            if (firstColumnAttributeAdded) {
-                const transformedWeakMeasureWidthItem = transformToWeakMeasureColumnWidthItem(columnWidth);
-                if (transformedWeakMeasureWidthItem) {
-                    return [...columnWidths, transformedWeakMeasureWidthItem];
-                }
             }
         } else if (isAttributeColumnWidthItem(columnWidth)) {
             if (
