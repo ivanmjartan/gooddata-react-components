@@ -1,4 +1,4 @@
-// (C) 2020 GoodData Corporation;
+// (C) 2020 GoodData Corporation
 import React, { Component } from "react";
 import { Model, PivotTable } from "@gooddata/react-components";
 
