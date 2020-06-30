@@ -87,6 +87,7 @@ export class PivotTableSizingWithMultipleMeasuresExample extends Component {
     state = {
         columnWidths: [],
         autoResize: false,
+        growToFit: false,
         gridTableCount: 0,
     };
 
@@ -108,6 +109,13 @@ export class PivotTableSizingWithMultipleMeasuresExample extends Component {
         // change also PivotTable key so by this checkbox we simulate init render
         this.setState(prevState => ({
             autoResize: !prevState.autoResize,
+            gridTableCount: prevState.gridTableCount + 1,
+        }));
+    };
+
+    onGrowToFitChanged = () => {
+        this.setState(prevState => ({
+            growToFit: !prevState.growToFit,
             gridTableCount: prevState.gridTableCount + 1,
         }));
     };
@@ -136,7 +144,7 @@ export class PivotTableSizingWithMultipleMeasuresExample extends Component {
                     </button>
 
                     <button
-                        className="gd-button gd-button-secondary gd-button gd-button-secondary s-change-width-button-measure-all"
+                        className="gd-button gd-button-secondary gd-button gd-button-secondary s-change-width-button-given-measures"
                         onClick={() => this.onButtonClick(weakMeasureWidth(60))}
                     >
                         Change Franchise Fees measure width
@@ -145,11 +153,22 @@ export class PivotTableSizingWithMultipleMeasuresExample extends Component {
                     <label style={{ paddingLeft: 50 }}>
                         Auto resize:
                         <input
-                            className="s-pivot-table-sizing-with-multiple-measures-autoresize"
+                            className="s-pivot-table-sizing-with-multiple-measures-autoresize-checkbox"
                             name="autoresize-checkbox"
                             type="checkbox"
                             checked={this.state.autoResize}
                             onChange={this.onAutoResizeChanged}
+                        />
+                    </label>
+
+                    <label style={{ paddingLeft: 20 }}>
+                        Grow to Fit:
+                        <input
+                            className="s-pivot-table-sizing-with-multiple-measures-grow-to-fit"
+                            name="grow-to-fit-checkbox"
+                            type="checkbox"
+                            checked={this.state.growToFit}
+                            onChange={this.onGrowToFitChanged}
                         />
                     </label>
                 </div>
@@ -167,7 +186,7 @@ export class PivotTableSizingWithMultipleMeasuresExample extends Component {
                             columnSizing: {
                                 columnWidths: [...this.state.columnWidths],
                                 defaultWidth: this.state.autoResize ? "viewport" : "unset",
-                                growToFit: false,
+                                growToFit: this.state.growToFit,
                             },
                         }}
                         pageSize={20}
