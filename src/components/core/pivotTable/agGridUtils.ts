@@ -267,9 +267,7 @@ export const isColumnDisplayed = (displayedColumns: Column[], column: Column) =>
     return displayedColumns.some(displayedColumn => displayedColumn.getColId() === column.getColId());
 };
 
-export const getMappingHeaderMeasureItem = (
-    item: Column | ColDef,
-): Execution.IMeasureHeaderItem | undefined => {
+const getMappingHeaderMeasureItem = (item: Column | ColDef): Execution.IMeasureHeaderItem | undefined => {
     if (!isMeasureColumn(item)) {
         return;
     }

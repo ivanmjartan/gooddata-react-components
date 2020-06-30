@@ -13,46 +13,11 @@ import {
 import { ColumnWidthItem, IAbsoluteColumnWidth, IResizedColumns } from "../../../../interfaces/PivotTable";
 import { IGridHeader } from "../agGridTypes";
 import { DEFAULT_COLUMN_WIDTH } from "../../PivotTable";
-import { Column, ColumnApi } from "ag-grid-community";
+
 import { oneColumnAttributeNoMeasureResponse } from "../../../../execution/fixtures/ExecuteAfm.fixtures";
 import { ResizedColumnsStore, IWeakMeasureColumnWidthItemsMap } from "../ResizedColumnsStore";
 import { MEASURE_COLUMN, COLUMN_ATTRIBUTE_COLUMN, ROW_ATTRIBUTE_COLUMN } from "../agGridConst";
-
-const getFakeColumnApi = (columnsMaps: { [id: string]: Column }): ColumnApi => {
-    const fakeColumnApi = {
-        getColumn: (columnId: string) => {
-            return columnsMaps[columnId];
-        },
-        setColumnWidth: (column: Column, width: number) => {
-            columnsMaps[column.getColId()].getColDef().width = width;
-        },
-        getAllColumns: () => {
-            return Object.keys(columnsMaps).map((colId: string) => columnsMaps[colId]);
-        },
-    };
-    return fakeColumnApi as ColumnApi;
-};
-
-const getFakeColumn = (colDef: any): Column => {
-    const columnDefinition = {
-        ...colDef,
-    };
-    const fakeColumn = {
-        getColDef: () => {
-            return columnDefinition;
-        },
-        getColId: () => {
-            return columnDefinition.colId;
-        },
-
-        getActualWidth: () => {
-            return columnDefinition.width;
-        },
-        drillItems: columnDefinition.drillItems,
-    };
-
-    return (fakeColumn as unknown) as Column;
-};
+import { getFakeColumn, getFakeColumnApi } from "./agGridMock";
 
 describe("agGridColumnSizing", () => {
     const columnWidths: ColumnWidthItem[] = [
