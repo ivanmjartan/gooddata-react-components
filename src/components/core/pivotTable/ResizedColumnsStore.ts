@@ -45,6 +45,7 @@ export function isColumnWidthAuto(columnWidth: ColumnWidth): boolean {
 export interface IWeakMeasureColumnWidthItemsMap {
     [measureIdentifier: string]: IWeakMeasureColumnWidthItem;
 }
+
 export class ResizedColumnsStore {
     private manuallyResizedColumns: IResizedColumnsCollection;
     private allMeasureColumnWidth: number | null;
@@ -199,8 +200,12 @@ export class ResizedColumnsStore {
         const allMeasureWidthItem = this.filterAllMeasureColumnWidthItem(columnWidths);
 
         if (isAllMeasureColumnWidthItem(allMeasureWidthItem)) {
-            const validatedWidth = defaultWidthValidator(allMeasureWidthItem.measureColumnWidthItem.width);
-            this.allMeasureColumnWidth = isAbsoluteColumnWidth(validatedWidth) ? validatedWidth.value : null;
+            const validatedAllMeasureColumnWidth = defaultWidthValidator(
+                allMeasureWidthItem.measureColumnWidthItem.width,
+            );
+            this.allMeasureColumnWidth = isAbsoluteColumnWidth(validatedAllMeasureColumnWidth)
+                ? validatedAllMeasureColumnWidth.value
+                : null;
         } else {
             this.allMeasureColumnWidth = null;
         }
@@ -252,13 +257,28 @@ export class ResizedColumnsStore {
             const onlyWeakWidthItems: IWeakMeasureColumnWidthItem[] = columnWidths.filter(
                 isWeakMeasureColumnWidthItem,
             );
-
             return onlyWeakWidthItems.reduce(
-                (map: IWeakMeasureColumnWidthItemsMap, weakWidthItem: IWeakMeasureColumnWidthItem) => ({
-                    ...map,
-                    [weakWidthItem.measureColumnWidthItem.locator.measureLocatorItem
-                        .measureIdentifier]: weakWidthItem,
-                }),
+                (map: IWeakMeasureColumnWidthItemsMap, weakWidthItem: IWeakMeasureColumnWidthItem) => {
+                    const validatedWidth = defaultWidthValidator(weakWidthItem.measureColumnWidthItem.width);
+
+                    if (isAbsoluteColumnWidth(validatedWidth)) {
+                        return {
+                            ...map,
+                            [weakWidthItem.measureColumnWidthItem.locator.measureLocatorItem
+                                .measureIdentifier]: {
+                                measureColumnWidthItem: {
+                                    ...weakWidthItem.measureColumnWidthItem,
+                                    width: {
+                                        ...weakWidthItem.measureColumnWidthItem.width,
+                                        value: validatedWidth.value,
+                                    },
+                                },
+                            },
+                        };
+                    }
+
+                    return map;
+                },
                 {},
             );
         }
