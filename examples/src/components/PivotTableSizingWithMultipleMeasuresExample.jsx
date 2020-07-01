@@ -11,6 +11,7 @@ import {
     franchiseFeesIdentifier,
     franchiseFeesAdRoyaltyIdentifier,
 } from "../utils/fixtures";
+import { isEmpty } from "lodash";
 
 const measures = [
     Model.measure(franchiseFeesIdentifier)
@@ -35,7 +36,8 @@ const weakMeasureWidth = width => Model.weakMeasureColumnWidthItemBuilder("franc
 const isAllMeasureColumnWidthItem = columnWidthItem => {
     return (
         columnWidthItem.measureColumnWidthItem !== undefined &&
-        columnWidthItem.measureColumnWidthItem.locators === undefined
+        columnWidthItem.measureColumnWidthItem.locators === undefined &&
+        columnWidthItem.measureColumnWidthItem.locator === undefined
     );
 };
 
@@ -58,6 +60,13 @@ const areLocatorsEqual = (locator1, locator2) => {
     );
 };
 
+const isWeakMeasureColumnWidthItem = columnWidthItem => {
+    return (
+        columnWidthItem.measureColumnWidthItem !== undefined &&
+        columnWidthItem.measureColumnWidthItem.locator !== undefined
+    );
+};
+
 const isSameWidthItem = (item, newItem) => {
     if (isAttributeColumnWidthItem(item) && isAttributeColumnWidthItem(newItem)) {
         return (
@@ -74,6 +83,10 @@ const isSameWidthItem = (item, newItem) => {
     }
 
     if (isAllMeasureColumnWidthItem(item) && isAllMeasureColumnWidthItem(newItem)) {
+        return true;
+    }
+
+    if (isWeakMeasureColumnWidthItem(item) && isWeakMeasureColumnWidthItem(newItem)) {
         return true;
     }
 
