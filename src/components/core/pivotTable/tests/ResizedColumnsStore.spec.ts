@@ -61,6 +61,51 @@ describe("ResizedColumnsStore", () => {
             },
         },
     ];
+    const columnWidthsWeakMeasureMockMinWidth: ColumnWidthItem[] = [
+        {
+            measureColumnWidthItem: {
+                width: {
+                    value: 10,
+                    allowGrowToFit: true,
+                },
+                locator: {
+                    measureLocatorItem: {
+                        measureIdentifier: "id",
+                    },
+                },
+            },
+        },
+    ];
+    const columnWidthsWeakMeasureMockMaxWidth: ColumnWidthItem[] = [
+        {
+            measureColumnWidthItem: {
+                width: {
+                    value: 4000,
+                    allowGrowToFit: true,
+                },
+                locator: {
+                    measureLocatorItem: {
+                        measureIdentifier: "id",
+                    },
+                },
+            },
+        },
+    ];
+    const columnWidthsWeakMeasureMockWithString: ColumnWidthItem[] = [
+        {
+            measureColumnWidthItem: {
+                width: {
+                    value: "ttt" as any,
+                    allowGrowToFit: true,
+                },
+                locator: {
+                    measureLocatorItem: {
+                        measureIdentifier: "id",
+                    },
+                },
+            },
+        },
+    ];
     const executionResponseMock: Execution.IExecutionResponse = {
         dimensions: [
             {
@@ -916,6 +961,63 @@ describe("ResizedColumnsStore", () => {
             const expectedResult = MANUALLY_SIZED_MAX_WIDTH;
             const result = (resizedColumnsStore as any).allMeasureColumnWidth;
             expect(result).toEqual(expectedResult);
+        });
+
+        it("should validate weak measures column widths with min width", () => {
+            const resizedColumnsStore = new ResizedColumnsStore();
+            resizedColumnsStore.updateColumnWidths(
+                columnWidthsWeakMeasureMockMinWidth,
+                executionResponseMock,
+            );
+            const expectedResult = {
+                measureColumnWidthItem: {
+                    width: {
+                        value: MIN_WIDTH,
+                        allowGrowToFit: true,
+                    },
+                    locator: {
+                        measureLocatorItem: {
+                            measureIdentifier: "id",
+                        },
+                    },
+                },
+            };
+            const result = (resizedColumnsStore as any).weakMeasuresColumnWidths.id;
+            expect(result).toMatchObject(expectedResult);
+        });
+
+        it("should validate weak measures column widths with max width", () => {
+            const resizedColumnsStore = new ResizedColumnsStore();
+            resizedColumnsStore.updateColumnWidths(
+                columnWidthsWeakMeasureMockMaxWidth,
+                executionResponseMock,
+            );
+            const expectedResult = {
+                measureColumnWidthItem: {
+                    width: {
+                        value: MANUALLY_SIZED_MAX_WIDTH,
+                        allowGrowToFit: true,
+                    },
+                    locator: {
+                        measureLocatorItem: {
+                            measureIdentifier: "id",
+                        },
+                    },
+                },
+            };
+            const result = (resizedColumnsStore as any).weakMeasuresColumnWidths.id;
+            expect(result).toMatchObject(expectedResult);
+        });
+
+        it("should validate weak measures column widths with string", () => {
+            const resizedColumnsStore = new ResizedColumnsStore();
+            resizedColumnsStore.updateColumnWidths(
+                columnWidthsWeakMeasureMockWithString,
+                executionResponseMock,
+            );
+            const expectedResult = {};
+            const result = (resizedColumnsStore as any).weakMeasuresColumnWidths;
+            expect(result).toMatchObject(expectedResult);
         });
     });
 });
